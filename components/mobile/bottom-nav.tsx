@@ -1,10 +1,10 @@
 "use client";
 
 const ITEMS = [
-  { id: "m-top", label: "Overview" },
-  { id: "m-attention", label: "Attention" },
-  { id: "m-bench", label: "Bench" },
-  { id: "m-activity", label: "Activity" },
+  { id: "m-top", label: "Home" },
+  { id: "m-workload", label: "Workload" },
+  { id: "m-pulse", label: "Pulse" },
+  { id: "m-financial", label: "Finance" },
 ];
 
 export function MobileBottomNav() {

@@ -47,6 +47,22 @@ export function hoursSince(offsetMs: number): number {
   return Math.round(-offsetMs / HOUR);
 }
 
+/** "Sep 7" — today's calendar date, read off the fixed demo clock rather
+ * than typed into the header. */
+export function todayDateLabel(): string {
+  const d = offsetToDate(0);
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+}
+
+/** "morning" / "afternoon" / "evening", from the demo clock's hour — the
+ * header greeting is never hardcoded to match whatever DEMO_NOW says. */
+export function greetingWord(): string {
+  const h = offsetToDate(0).getUTCHours();
+  if (h < 12) return "morning";
+  if (h < 18) return "afternoon";
+  return "evening";
+}
+
 const UNPLACED_REASON_LABEL: Record<string, string> = {
   no_capacity: "no lawyer with capacity",
   no_expertise_match: "no expertise match",

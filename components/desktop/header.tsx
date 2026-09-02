@@ -1,11 +1,21 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { greetingWord, todayDateLabel } from "@/lib/format";
+
+// Stands in for the signed-in admin's name until there's an auth session
+// to read it from.
+const ADMIN_NAME = "Arshita";
 
 export function Header({ onOpenPalette }: { onOpenPalette: () => void }) {
   return (
     <header className="flex items-center justify-between border-b border-border py-4">
-      <p className="t-section">Mysil</p>
+      <div>
+        <p className="t-section">
+          Good {greetingWord()}, {ADMIN_NAME}
+        </p>
+        <p className="t-detail text-muted-foreground">{todayDateLabel()} · Mysil</p>
+      </div>
       <button
         type="button"
         onClick={onOpenPalette}
