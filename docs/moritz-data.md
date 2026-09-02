@@ -162,11 +162,15 @@ Same shape, quiet values. This is the empty state, and it has to look like a con
 
 ## Pillars
 
+The headline is always a count of things currently wrong — the same number
+the threshold rule fired on — so it means the same thing whether the day is
+bad or good. Rates move to the baseline line in both datasets.
+
 | Pillar | State | Headline | Baseline | Evidence |
 |---|---|---|---|---|
-| Firm health | **Steady** | 99% on-time | target 98% | Nothing overdue · conflicts clear |
-| Workload | **Steady** | 1 of 38 over committed | | 11 lawyers with headroom · all availability declared |
-| Financial | **Steady** | 69% realized margin | quoted 68% · target 65% | All open matters above floor |
+| Firm health | **Steady** | 0 | 99% on-time · target 98% | Nothing overdue · conflicts clear |
+| Workload | **Steady** | 1 | 1 of 38 over committed | 11 lawyers with headroom · all availability declared |
+| Financial | **Steady** | 0 | realized 69% · quoted 68% · target 65% | All open matters above floor |
 
 ## Lawyers
 
