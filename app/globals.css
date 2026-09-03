@@ -4,85 +4,101 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------- *
- * Mysil — ledger token layer.
+ * Mysil — design token layer.
  *
- * This file is the only place a hex code may appear. Nothing in the
- * component tree writes a colour, a radius or a font by value — every
- * visual decision on the page traces back to a variable declared here.
+ * Three tiers, in order:
+ *   1. Primitives  — the locked brand palette (Bone / Warm Sand / Moss /
+ *      Slate Blue / Charcoal / Terracotta) plus a small set of neutrals
+ *      and tints *derived* from those six — never a new hue. This is the
+ *      only place a hex code may appear.
+ *   2. Semantic (shadcn) tokens — every --background/--primary/etc below
+ *      is a var() reference into tier 1, never a literal.
+ *   3. @theme inline — hands the semantic tier to Tailwind v4 so utility
+ *      classes (bg-primary, text-ink-2, rounded-lg, ...) resolve to it.
  *
- * The design is a ledger, not a card grid: flat records, ruled by
- * hairlines, weight carried by type rather than by containers. --card
- * equals --background on purpose — see the note above it.
- *
- * Palette is the locked brand system: Bone / Warm Sand / Moss / Slate
- * Blue / Charcoal / Terracotta. No other hue is introduced — every
- * status/chart colour below is one of those six, or a tint mixed from
- * them for contrast.
+ * Nothing in the component tree writes a colour, a radius or a font by
+ * value — every visual decision traces back through these three tiers.
  * ---------------------------------------------------------------------- */
 
 :root {
-  /* ground */
-  --background: #f1eee7; /* Bone */
-  --foreground: var(--ink-1); /* Charcoal */
+  /* ---- 1. primitives — locked brand palette ---- */
+  --brand-bone: #f1eee7;
+  --brand-warm-sand: #d8ccbc;
+  --brand-moss: #707a63;
+  --brand-slate-blue: #53677a;
+  --brand-charcoal: #292827;
+  --brand-terracotta: #b65332;
 
-  /* card == background. This is what turns a card grid into a ledger
-     without deleting the component: give a Card no fill of its own, then
-     drop its border per instance. */
-  --card: #f1eee7;
-  --card-foreground: #292827;
+  /* derived neutrals/tints — mixes of the six above, not new hues */
+  --brand-bone-light: #f7f5ef; /* card/popover: a touch lighter/cleaner than the page ground */
+  --brand-neutral-border: #ded3c2; /* Bone/Warm Sand blend — subtle, never dark */
+  --brand-ink-2: #4a473e; /* Charcoal, warmed and lightened one step */
+  --brand-ink-3: #55534c; /* Charcoal, warmed and lightened two steps */
+  --brand-steady-tint: #dde3d5; /* Moss, tinted pale */
+  --brand-straining-tint: #e3c8a6; /* Warm Sand shifted toward Terracotta */
+  --brand-terracotta-tint: #f3ded2; /* Terracotta, tinted pale */
 
-  /* same warm neutral as card — no white SaaS surface on this site */
-  --popover: #f1eee7;
-  --popover-foreground: #292827;
+  /* ---- 2. semantic (shadcn) tokens — reference tier 1 only ---- */
+  --background: var(--brand-bone);
+  --foreground: var(--ink-1);
 
-  --primary: #53677a; /* Slate Blue */
-  --primary-foreground: #f1eee7; /* Bone */
-  --secondary: #d8ccbc; /* Warm Sand */
-  --secondary-foreground: #292827; /* Charcoal */
+  /* card/popover get their own surface, lighter and cleaner than the
+     page ground — an elevated warm neutral, never a white SaaS card. */
+  --card: var(--brand-bone-light);
+  --card-foreground: var(--brand-charcoal);
+
+  --popover: var(--brand-bone-light);
+  --popover-foreground: var(--brand-charcoal);
+
+  --primary: var(--brand-slate-blue);
+  --primary-foreground: var(--brand-bone);
+  --secondary: var(--brand-warm-sand);
+  --secondary-foreground: var(--brand-charcoal);
 
   /* --muted carries the Warm Sand surface — table header fills, row
      hover, skeletons, disabled states. Every "quiet" state's text rides
-     on --muted-foreground below, never on the grey the token used to be. */
-  --muted: #d8ccbc; /* Warm Sand */
+     on --muted-foreground below, never on a bare grey. */
+  --muted: var(--brand-warm-sand);
   --muted-foreground: var(--ink-3);
 
-  --accent: #707a63; /* Moss */
-  --accent-foreground: #f1eee7; /* Bone */
+  --accent: var(--brand-moss);
+  --accent-foreground: var(--brand-bone);
 
-  --border: #ded3c2; /* Bone/Warm Sand blend — subtle, never dark */
-  --input: #ded3c2;
+  --border: var(--brand-neutral-border);
+  --input: var(--brand-neutral-border);
   /* focus ring is Slate Blue — the one brand halo the system allows. */
-  --ring: #53677a;
+  --ring: var(--brand-slate-blue);
 
   /* Terracotta is the whole system's one warning/attention hue — used by
      --destructive and, at the same value, by --breaking below. */
-  --destructive: #b65332; /* Terracotta */
-  --destructive-foreground: #f1eee7; /* Bone */
+  --destructive: var(--brand-terracotta);
+  --destructive-foreground: var(--brand-bone);
 
   /* charts stay inside the six brand colours, no rainbow */
-  --chart-1: #707a63; /* Moss */
-  --chart-2: #53677a; /* Slate Blue */
-  --chart-3: #b65332; /* Terracotta */
-  --chart-4: #d8ccbc; /* Warm Sand */
-  --chart-5: #292827; /* Charcoal */
+  --chart-1: var(--brand-moss);
+  --chart-2: var(--brand-slate-blue);
+  --chart-3: var(--brand-terracotta);
+  --chart-4: var(--brand-warm-sand);
+  --chart-5: var(--brand-charcoal);
 
   /* status — derived from the brand palette, not generic traffic-light
      colours: steady tints Moss, straining tints toward Terracotta, and
      breaking is Terracotta itself. */
-  --steady: #dde3d5;
-  --steady-foreground: #292827;
-  --straining: #e3c8a6;
-  --straining-foreground: #292827;
-  --breaking: #b65332;
-  --breaking-foreground: #f1eee7;
-  --breaking-tint: #f3ded2;
+  --steady: var(--brand-steady-tint);
+  --steady-foreground: var(--brand-charcoal);
+  --straining: var(--brand-straining-tint);
+  --straining-foreground: var(--brand-charcoal);
+  --breaking: var(--brand-terracotta);
+  --breaking-foreground: var(--brand-bone);
+  --breaking-tint: var(--brand-terracotta-tint);
 
   /* named ink ramp — declared once, referenced by name everywhere,
-     including by --foreground / --muted-foreground below, so the shadcn
-     tokens and our ramp never repeat a hex against each other. */
-  --ink-1: #292827; /* Charcoal — body text, primary ink */
-  --ink-2: #4a473e; /* detail lines, second ink */
-  --ink-3: #55534c; /* quiet ink — denominators, muted-foreground */
+     including by --foreground / --muted-foreground above, so the shadcn
+     tokens and our ramp never repeat a primitive reference against each
+     other. */
+  --ink-1: var(--brand-charcoal); /* body text, primary ink */
+  --ink-2: var(--brand-ink-2); /* detail lines, second ink */
+  --ink-3: var(--brand-ink-3); /* quiet ink — denominators, muted-foreground */
 
   /* restrained radius system: 6px controls, 8px default, 12px large
      surfaces. Declared directly (not via calc off --radius) so each step
