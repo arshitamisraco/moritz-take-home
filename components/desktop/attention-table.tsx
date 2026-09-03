@@ -62,7 +62,7 @@ export function AttentionTable({
               <Fragment key={row.matter.id}>
                 {showHeader && (
                   <TableRow key={`${row.bucket}-header`} className="border-b-0 hover:bg-transparent">
-                    <TableCell colSpan={5} className="pt-6 pb-2 first:pt-0">
+                    <TableCell colSpan={5} className="pt-10 pb-3 first:pt-0">
                       <span className="t-eyebrow text-muted-foreground">
                         {BUCKET_LABEL[row.bucket]}
                       </span>
@@ -72,19 +72,24 @@ export function AttentionTable({
                 <TableRow
                   key={row.matter.id}
                   data-halted={row.matter.halted || undefined}
-                  className="group/row h-11 cursor-pointer border-border hover:bg-transparent"
+                  className={cn(
+                    "group/row h-16 cursor-pointer border-border transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                    row.bucket === "compliance"
+                      ? "hover:bg-breaking-hover"
+                      : "hover:bg-accent active:bg-surface-active"
+                  )}
                   onClick={() => onOpenMatter(row.matter.id)}
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") onOpenMatter(row.matter.id);
                   }}
                 >
-                  <TableCell className="w-[26%] py-3 align-top whitespace-normal">
+                  <TableCell className="w-[26%] py-4 align-top whitespace-normal">
                     <p className="t-body">{row.matter.name}</p>
                     <p className="t-detail text-muted-foreground">{row.matter.client}</p>
                   </TableCell>
 
-                  <TableCell className="w-[10%] py-3 align-top">
+                  <TableCell className="w-[10%] py-4 align-top">
                     {row.bucket === "compliance" ? (
                       <StatusBadge variant="breaking" label="compliance" />
                     ) : (
@@ -94,7 +99,7 @@ export function AttentionTable({
 
                   <TableCell
                     className={cn(
-                      "w-[28%] py-3 align-top whitespace-normal t-detail",
+                      "w-[28%] py-4 align-top whitespace-normal t-detail",
                       row.matter.halted && "line-through decoration-1"
                     )}
                     style={{ color: "var(--ink-2)" }}
@@ -102,7 +107,7 @@ export function AttentionTable({
                     {attentionDetail(row.matter, row.bucket)}
                   </TableCell>
 
-                  <TableCell className="w-[16%] py-3 align-top">
+                  <TableCell className="w-[16%] py-4 align-top">
                     {lawyer ? (
                       <div className="flex items-baseline gap-1.5">
                         <span className="t-body text-[14px]">{lawyer.name}</span>
@@ -114,7 +119,7 @@ export function AttentionTable({
                   </TableCell>
 
                   <TableCell
-                    className="w-[20%] py-3 align-top text-right"
+                    className="w-[20%] py-4 align-top text-right"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <RowActions

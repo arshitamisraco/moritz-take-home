@@ -1,30 +1,23 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ReassignMenu } from "@/components/ledger/reassign-menu";
 import type { EffectiveMatter } from "@/lib/derive/apply-overlay";
 import type { LawyerLoad } from "@/lib/derive/bench";
 import type { LedgerAction } from "@/lib/state/types";
 import { cn } from "@/lib/utils";
 
-function ActionLink({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="t-detail text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
-    >
-      {children}
-    </button>
-  );
-}
-
 function DoneMarker({ children }: { children: React.ReactNode }) {
   return <span className="t-eyebrow text-muted-foreground">{children}</span>;
 }
 
 /**
- * The row-level action bar — every link here does something, optimistically,
- * in the same overlay every other zone reads from. Nothing is decorative.
+ * The row-level action bar — every control here acts, optimistically, in the
+ * same overlay every other zone reads from. No icons (this is a ledger row),
+ * no underlines (nothing here reveals or navigates — Reassign is the one
+ * disclosure and it carries its own caret). Tiers follow the Sheet mapping:
+ * Reassign secondary · Chase ghost · Expedite ghost · Halt work / Escalate
+ * destructive.
  */
 export function RowActions({
   matter,
@@ -52,7 +45,7 @@ export function RowActions({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-1",
+        "flex flex-wrap items-center gap-x-2 gap-y-1",
         reveal === "hover" &&
           "opacity-0 transition-opacity group-hover/row:opacity-100 group-focus-within/row:opacity-100",
         className
@@ -69,34 +62,46 @@ export function RowActions({
         (matter.chased ? (
           <DoneMarker>chased</DoneMarker>
         ) : (
-          <ActionLink onClick={() => dispatch({ type: "chase", matterId: matter.id, matterLabel: label })}>
-            chase
-          </ActionLink>
+          <Button
+            variant="ghost"
+            onClick={() => dispatch({ type: "chase", matterId: matter.id, matterLabel: label })}
+          >
+            Chase
+          </Button>
         ))}
 
       {isBreach &&
         (matter.conflictsExpedited ? (
           <DoneMarker>expedited</DoneMarker>
         ) : (
-          <ActionLink onClick={() => dispatch({ type: "expedite", matterId: matter.id, matterLabel: label })}>
-            expedite clearance
-          </ActionLink>
+          <Button
+            variant="ghost"
+            onClick={() => dispatch({ type: "expedite", matterId: matter.id, matterLabel: label })}
+          >
+            Expedite clearance
+          </Button>
         ))}
 
       {matter.halted ? (
         <DoneMarker>halted</DoneMarker>
       ) : (
-        <ActionLink onClick={() => dispatch({ type: "halt", matterId: matter.id, matterLabel: label })}>
-          halt work
-        </ActionLink>
+        <Button
+          variant="destructive"
+          onClick={() => dispatch({ type: "halt", matterId: matter.id, matterLabel: label })}
+        >
+          Halt work
+        </Button>
       )}
 
       {matter.escalated ? (
         <DoneMarker>escalated</DoneMarker>
       ) : (
-        <ActionLink onClick={() => dispatch({ type: "escalate", matterId: matter.id, matterLabel: label })}>
-          escalate
-        </ActionLink>
+        <Button
+          variant="destructive"
+          onClick={() => dispatch({ type: "escalate", matterId: matter.id, matterLabel: label })}
+        >
+          Escalate
+        </Button>
       )}
     </div>
   );

@@ -20,11 +20,11 @@ const KIND_LABEL: Record<string, string> = {
 function Sparkline({ days }: { days: PulseDay[] }) {
   const max = Math.max(...days.map((d) => d.count), 1);
   return (
-    <div className="mt-4 flex items-end gap-3">
+    <div className="mt-8 flex items-end gap-4">
       {days.map((d) => (
-        <div key={d.label} className="flex flex-col items-center gap-1.5">
+        <div key={d.label} className="flex flex-col items-center gap-2">
           <span className="t-detail tabular-nums text-muted-foreground">{d.count}</span>
-          <div className="flex h-16 w-6 items-end bg-accent">
+          <div className="flex h-20 w-7 items-end bg-accent">
             <div className="w-full bg-chart-3" style={{ height: `${(d.count / max) * 100}%` }} />
           </div>
           <span className="t-eyebrow text-muted-foreground">{d.label}</span>
@@ -57,13 +57,13 @@ export function Pulse({
   const sorted = [...events].sort((a, b) => b.offsetMs - a.offsetMs);
 
   return (
-    <section id="pulse" aria-label="Firm pulse" className="flex flex-col pb-12">
+    <section id="pulse" aria-label="Firm pulse" className="flex flex-col pb-20">
       <h2 className="t-section">Firm pulse</h2>
-      <Separator className="mt-4" />
+      <Separator className="mt-6" />
 
-      <div className="mt-6 grid grid-cols-4 divide-x divide-border">
+      <div className="mt-10 grid grid-cols-4 divide-x divide-border">
         {tiles.map((t) => (
-          <div key={t.label} className="flex flex-col gap-1.5 px-6 first:pl-0">
+          <div key={t.label} className="flex flex-col gap-2 px-8 first:pl-0">
             <p className="t-figure text-[32px]">{t.value}</p>
             <p className="t-detail text-muted-foreground">{t.label}</p>
           </div>
@@ -73,13 +73,13 @@ export function Pulse({
       <Sparkline days={weeklyPulse} />
 
       {sorted.length > 0 && (
-        <details className="mt-8 border-t border-border pt-4">
-          <summary className="t-detail cursor-pointer text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
+        <details className="mt-12 border-t border-border pt-6">
+          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-[2px] w-fit">
             Recent activity
           </summary>
-          <ul className="mt-3 flex flex-col divide-y divide-border">
+          <ul className="mt-4 flex flex-col divide-y divide-border">
             {sorted.map((e) => (
-              <li key={e.id} className="flex items-baseline justify-between gap-4 py-2">
+              <li key={e.id} className="flex items-baseline justify-between gap-4 py-2.5">
                 <span className="t-detail text-muted-foreground tabular-nums">
                   {e.offsetMs <= 0 ? clockTime(e.offsetMs) : "now"}
                 </span>

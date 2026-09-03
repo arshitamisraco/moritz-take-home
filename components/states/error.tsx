@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 export function ErrorState() {
   return (
     <main className="mx-auto max-w-[1200px] px-6">
@@ -13,13 +15,9 @@ export function ErrorState() {
         <p className="t-detail text-muted-foreground">
           The firm data source didn&rsquo;t respond — nothing shown here is current
         </p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="t-detail mt-2 w-fit text-foreground underline decoration-border underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
-        >
-          retry
-        </button>
+        <Button variant="outline" className="mt-3 w-fit" onClick={() => window.location.reload()}>
+          Retry
+        </Button>
       </div>
     </main>
   );

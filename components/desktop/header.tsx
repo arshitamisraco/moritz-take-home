@@ -9,7 +9,7 @@ const ADMIN_NAME = "Arshita";
 
 export function Header({ onOpenPalette }: { onOpenPalette: () => void }) {
   return (
-    <header className="flex items-center justify-between border-b border-border py-4">
+    <header className="flex items-center justify-between border-b border-border py-6">
       <div>
         <p className="t-section">
           Good {greetingWord()}, {ADMIN_NAME}

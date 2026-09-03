@@ -16,9 +16,9 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
   const latest = fx.revenueByMonth[fx.revenueByMonth.length - 1];
 
   return (
-    <section id="m-financial" className="border-b border-border px-4 py-4">
+    <section id="m-financial" className="border-b border-border px-4 py-7">
       <p className="t-eyebrow text-muted-foreground">Financial health</p>
-      <div className="mt-2 flex items-baseline gap-3">
+      <div className="mt-3 flex items-baseline gap-3">
         <p className="t-body">{formatUsdCompact(latest?.amountUsd ?? 0)} revenue</p>
         {changePct !== null && (
           <span className={cn("t-detail tabular-nums", changePct < 0 ? "text-breaking" : "text-foreground")}>
@@ -26,12 +26,12 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
           </span>
         )}
       </div>
-      <p className="t-detail mt-1 text-muted-foreground">
+      <p className="t-detail mt-2 text-muted-foreground">
         {attainment}% of target ({formatUsdCompact(fx.revenueTargetUsd)}/mo)
       </p>
 
-      <details className="mt-3">
-        <summary className="t-detail cursor-pointer text-foreground underline decoration-border underline-offset-4">
+      <details className="mt-4">
+        <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
           View breakdown
         </summary>
         <p className="t-detail mt-2 text-muted-foreground">
@@ -42,9 +42,9 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
             All open matters above the {MARGIN_FLOOR_PCT}% floor
           </p>
         ) : (
-          <ul className="mt-2 flex flex-col divide-y divide-border">
+          <ul className="mt-3 flex flex-col divide-y divide-border">
             {belowFloor.map((m) => (
-              <li key={m.id} className="flex items-center justify-between gap-3 py-2">
+              <li key={m.id} className="flex items-center justify-between gap-3 py-3">
                 <p className="t-detail">
                   {m.name} <span className="text-muted-foreground">· {m.client}</span>
                 </p>

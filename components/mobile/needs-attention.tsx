@@ -38,9 +38,9 @@ export function MobileNeedsAttention({
         <MobileComplianceBreach row={complianceRow} dispatch={dispatch} onOpenMatter={onOpenMatter} />
       )}
       {quiet ? (
-        <div className="border-b border-border px-4 py-4">
+        <div className="border-b border-border px-4 py-7">
           <p className="t-body">Nothing needs you right now</p>
-          <p className="t-detail mt-1 text-muted-foreground">Every matter is inside its promised window.</p>
+          <p className="t-detail mt-2 text-muted-foreground">Every matter is inside its promised window.</p>
         </div>
       ) : (
         <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
@@ -49,7 +49,7 @@ export function MobileNeedsAttention({
               key={s.label}
               type="button"
               onClick={scrollToWorkload}
-              className="flex flex-col items-start gap-1.5 px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              className="flex flex-col items-start gap-2 px-4 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
             >
               <StatusBadge variant={s.state} />
               <p className={cn("t-figure text-[28px]", s.state === "breaking" ? "text-breaking" : "text-foreground")}>

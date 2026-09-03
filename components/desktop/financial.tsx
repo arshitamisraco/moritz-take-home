@@ -42,11 +42,11 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
   const latest = fx.revenueByMonth[fx.revenueByMonth.length - 1];
 
   return (
-    <section id="financial" aria-label="Financial health" className="flex flex-col pb-12">
+    <section id="financial" aria-label="Financial health" className="flex flex-col pb-20">
       <h2 className="t-section">Financial health</h2>
-      <Separator className="mt-4" />
+      <Separator className="mt-6" />
 
-      <div className="mt-6 grid grid-cols-2 gap-10">
+      <div className="mt-10 grid grid-cols-2 gap-16">
         <div>
           <div className="flex items-baseline justify-between">
             <p className="t-eyebrow text-muted-foreground">Revenue this month</p>
@@ -56,8 +56,8 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
               </span>
             )}
           </div>
-          <p className="t-figure mt-1">{formatUsdCompact(latest?.amountUsd ?? 0)}</p>
-          <ChartContainer config={revenueConfig} className="mt-4 h-40 w-full">
+          <p className="t-figure mt-2">{formatUsdCompact(latest?.amountUsd ?? 0)}</p>
+          <ChartContainer config={revenueConfig} className="mt-6 h-40 w-full">
             <AreaChart data={fx.revenueByMonth} margin={{ left: 8, right: 8 }}>
               <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis
@@ -91,30 +91,30 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
 
         <div>
           <p className="t-eyebrow text-muted-foreground">Billable performance — target {formatUsdCompact(fx.revenueTargetUsd)}/mo</p>
-          <p className="t-figure mt-1">{attainment}%</p>
+          <p className="t-figure mt-2">{attainment}%</p>
           <p className="t-detail text-muted-foreground">
             {formatUsdCompact(latest?.amountUsd ?? 0)} of {formatUsdCompact(fx.revenueTargetUsd)}
           </p>
-          <Progress value={Math.min(attainment, 100)} className="mt-6">
+          <Progress value={Math.min(attainment, 100)} className="mt-8">
             <ProgressTrack className="h-2 bg-accent">
               <ProgressIndicator className={cn(attainment >= 100 ? "bg-steady-foreground" : "bg-chart-2")} />
             </ProgressTrack>
           </Progress>
-          <p className="t-detail mt-4 text-muted-foreground">
+          <p className="t-detail mt-6 text-muted-foreground">
             realized margin {fx.realizedMarginPct}% · quoted {fx.quotedMarginPct}% · target {fx.marginTargetPct}%
           </p>
         </div>
       </div>
 
-      <details className="mt-8 border-t border-border pt-4">
-        <summary className="t-detail cursor-pointer text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
+      <details className="mt-12 border-t border-border pt-6">
+        <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-[2px] w-fit">
           Margin detail — {belowFloor.length} matter{belowFloor.length === 1 ? "" : "s"} below the {MARGIN_FLOOR_PCT}% floor
         </summary>
 
-        <div className="mt-4 grid grid-cols-2 gap-8">
+        <div className="mt-6 grid grid-cols-2 gap-12">
           <div>
             <p className="t-eyebrow text-muted-foreground">margin by matter type</p>
-            <ChartContainer config={marginConfig} className="mt-3 h-44 w-full">
+            <ChartContainer config={marginConfig} className="mt-4 h-44 w-full">
               <BarChart data={byType} layout="vertical" margin={{ left: 8, right: 12 }}>
                 <CartesianGrid horizontal={false} stroke="var(--border)" />
                 <XAxis
@@ -148,13 +148,13 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
           <div>
             <p className="t-eyebrow text-muted-foreground">margin on open matters below floor</p>
             {belowFloor.length === 0 ? (
-              <p className="t-detail mt-3 text-muted-foreground">
+              <p className="t-detail mt-4 text-muted-foreground">
                 All open matters above the {MARGIN_FLOOR_PCT}% floor
               </p>
             ) : (
-              <ul className="mt-3 flex flex-col divide-y divide-border">
+              <ul className="mt-4 flex flex-col divide-y divide-border">
                 {belowFloor.map((m) => (
-                  <li key={m.id} className="flex items-center justify-between gap-4 py-2.5">
+                  <li key={m.id} className="flex items-center justify-between gap-4 py-3">
                     <p className="t-body">
                       {m.name} <span className="text-muted-foreground">· {m.client}</span>
                     </p>

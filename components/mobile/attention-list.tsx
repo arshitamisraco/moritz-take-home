@@ -20,15 +20,15 @@ function primaryAction(row: AtRiskRow): { label: string; action: LedgerAction } 
   const label = `${row.matter.name} · ${row.matter.client}`;
   if (row.bucket === "compliance") {
     if (row.matter.conflictsExpedited) return null;
-    return { label: "expedite clearance", action: { type: "expedite", matterId: row.matter.id, matterLabel: label } };
+    return { label: "Expedite clearance", action: { type: "expedite", matterId: row.matter.id, matterLabel: label } };
   }
   if (row.matter.effectiveLawyerId === null) return null; // reassign needs a picker, not a one-tap action
   if (row.bucket === "overdue") {
     if (row.matter.escalated) return null;
-    return { label: "escalate", action: { type: "escalate", matterId: row.matter.id, matterLabel: label } };
+    return { label: "Escalate", action: { type: "escalate", matterId: row.matter.id, matterLabel: label } };
   }
   if (row.matter.chased) return null;
-  return { label: "chase", action: { type: "chase", matterId: row.matter.id, matterLabel: label } };
+  return { label: "Chase", action: { type: "chase", matterId: row.matter.id, matterLabel: label } };
 }
 
 export function MobileAttentionList({
@@ -53,14 +53,14 @@ export function MobileAttentionList({
         return (
           <li key={row.matter.id} className="border-b border-border">
             {showHeader && (
-              <p className="t-eyebrow px-4 pt-5 pb-2 text-muted-foreground">
+              <p className="t-eyebrow px-4 pt-7 pb-3 text-muted-foreground">
                 {BUCKET_LABEL[row.bucket]}
               </p>
             )}
             <button
               type="button"
               onClick={() => onOpenMatter(row.matter.id)}
-              className="flex w-full flex-col gap-1 px-4 pt-3 pb-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              className="flex w-full flex-col gap-1.5 px-4 pt-4 pb-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
             >
               {row.bucket !== "compliance" && row.matter.deadlineKind && (
                 <StatusBadge variant={row.matter.deadlineKind} />
@@ -76,11 +76,16 @@ export function MobileAttentionList({
               </p>
             </button>
             {action && (
-              <div className="px-4 pb-3">
+              <div className="px-4 pb-4">
                 <button
                   type="button"
                   onClick={() => dispatch(action.action)}
-                  className="t-detail w-fit text-foreground underline decoration-border underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
+                  className={cn(
+                    "t-detail -mx-2 w-fit rounded-[2px] px-2 py-1 text-left transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                    action.action.type === "escalate"
+                      ? "text-destructive hover:bg-breaking-hover"
+                      : "text-foreground hover:bg-accent"
+                  )}
                 >
                   {action.label}
                 </button>

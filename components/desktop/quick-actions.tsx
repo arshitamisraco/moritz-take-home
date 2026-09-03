@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Search, FileText, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 function scrollToSection(id: string) {
@@ -24,20 +25,20 @@ export function QuickActions({ onOpenPalette }: { onOpenPalette: () => void }) {
   ];
 
   return (
-    <section aria-label="Quick actions" className="flex flex-col pb-16">
+    <section aria-label="Quick actions" className="flex flex-col pb-24">
       <p className="t-eyebrow text-muted-foreground">Quick actions</p>
-      <Separator className="mt-4" />
-      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <Separator className="mt-6" />
+      <div className="mt-6 -mx-2 flex flex-wrap items-center gap-x-3 gap-y-1">
         {actions.map((a) => (
-          <button
+          <Button
             key={a.label}
-            type="button"
+            variant="ghost"
             onClick={a.onClick}
-            className="flex items-center gap-1.5 t-detail text-foreground hover:text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
+            data-icon="inline-start"
           >
             <a.icon className="size-3.5" aria-hidden="true" />
             {a.label}
-          </button>
+          </Button>
         ))}
       </div>
     </section>

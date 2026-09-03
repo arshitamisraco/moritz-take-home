@@ -1,6 +1,7 @@
 "use client";
 
 import { TriangleAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ledger/status-badge";
 import type { AtRiskRow } from "@/lib/derive/matters";
 import { attentionSeverity, type AttentionSummary } from "@/lib/derive/attention-summary";
@@ -39,18 +40,18 @@ export function NeedsAttention({
   ];
 
   return (
-    <section id="attention" aria-label="Needs attention" className="pt-10 pb-10">
+    <section id="attention" aria-label="Needs attention" className="pt-16 pb-20">
       <div className="flex items-center gap-2">
-        <TriangleAlert className="size-4" aria-hidden="true" />
-        <h1 className="t-section">Needs attention</h1>
+        {!quiet && <TriangleAlert className="size-4" aria-hidden="true" />}
+        <h1 className="t-section">{quiet ? "Nothing needs attention" : "Needs attention"}</h1>
       </div>
 
       {complianceRow && (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border border-breaking bg-breaking-tint px-5 py-4">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border border-breaking bg-breaking-tint px-6 py-6">
           <button
             type="button"
             onClick={() => onOpenMatter(complianceRow.matter.id)}
-            className="flex flex-wrap items-center gap-3 text-left rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="flex flex-wrap items-center gap-4 text-left rounded-[2px] transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <StatusBadge variant="breaking" label="compliance" />
             <span className="t-body">
@@ -63,8 +64,8 @@ export function NeedsAttention({
           {complianceRow.matter.conflictsExpedited ? (
             <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
           ) : (
-            <button
-              type="button"
+            <Button
+              className="shrink-0"
               onClick={() =>
                 dispatch({
                   type: "expedite",
@@ -72,27 +73,26 @@ export function NeedsAttention({
                   matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
                 })
               }
-              className="t-detail shrink-0 text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
             >
-              expedite clearance
-            </button>
+              Expedite clearance
+            </Button>
           )}
         </div>
       )}
 
       {quiet ? (
-        <p className="mt-4 t-body">Nothing needs you right now — every matter is inside its promised window.</p>
+        <p className="mt-6 t-body">Nothing needs you right now — every matter is inside its promised window.</p>
       ) : (
-        <div className="mt-4 grid grid-cols-3 divide-x divide-border border-y border-border">
+        <div className="mt-8 -mx-6 grid grid-cols-3 divide-x divide-border border-y border-border">
           {stats.map((s) => (
             <button
               key={s.label}
               type="button"
               onClick={() => scrollToSection(s.target)}
-              className="flex flex-col items-start gap-2 px-6 py-6 text-left first:pl-0 last:pr-0 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
             >
               <div className="flex items-center justify-between w-full gap-2">
-                <p className="t-eyebrow text-muted-foreground">{s.label}</p>
+                <p className="t-eyebrow-plain text-muted-foreground">{s.label}</p>
                 <StatusBadge variant={s.state} />
               </div>
               <p

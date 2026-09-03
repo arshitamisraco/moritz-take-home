@@ -10,9 +10,9 @@ export function MobilePulse({ pulse, weeklyPulse }: { pulse: TodayPulse; weeklyP
   ];
 
   return (
-    <section id="m-pulse" className="border-b border-border px-4 py-4">
+    <section id="m-pulse" className="border-b border-border px-4 py-7">
       <p className="t-eyebrow text-muted-foreground">Today</p>
-      <div className="mt-3 grid grid-cols-4 gap-2">
+      <div className="mt-4 grid grid-cols-4 gap-3">
         {tiles.map((t) => (
           <div key={t.label}>
             <p className="t-body">{t.value}</p>
@@ -20,10 +20,10 @@ export function MobilePulse({ pulse, weeklyPulse }: { pulse: TodayPulse; weeklyP
           </div>
         ))}
       </div>
-      <div className="mt-4 flex items-end gap-2.5">
+      <div className="mt-6 flex items-end gap-3">
         {weeklyPulse.map((d) => (
-          <div key={d.label} className="flex flex-col items-center gap-1">
-            <div className="flex h-10 w-5 items-end bg-accent">
+          <div key={d.label} className="flex flex-col items-center gap-1.5">
+            <div className="flex h-14 w-6 items-end bg-accent">
               <div className="w-full bg-chart-3" style={{ height: `${(d.count / max) * 100}%` }} />
             </div>
             <span className="t-eyebrow text-muted-foreground">{d.label}</span>
