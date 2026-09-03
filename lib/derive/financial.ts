@@ -39,3 +39,23 @@ export function marginByType(fx: EffectiveFixture): TypeMargin[] {
     .map(([type, marginPct]) => ({ type, label: TYPE_LABEL[type] ?? type, marginPct }))
     .sort((a, b) => b.marginPct - a.marginPct);
 }
+
+/** Percent change of the latest month over the one before it — the
+ * headline's up/down arrow, never typed in. */
+export function revenueChangePct(fx: EffectiveFixture): number | null {
+  const months = fx.revenueByMonth;
+  if (months.length < 2) return null;
+  const last = months[months.length - 1].amountUsd;
+  const prev = months[months.length - 2].amountUsd;
+  if (prev === 0) return null;
+  return Math.round(((last - prev) / prev) * 100);
+}
+
+/** Latest month's revenue against the monthly target — the "billable
+ * performance" bar. */
+export function targetAttainmentPct(fx: EffectiveFixture): number {
+  const months = fx.revenueByMonth;
+  const last = months[months.length - 1]?.amountUsd ?? 0;
+  if (fx.revenueTargetUsd === 0) return 0;
+  return Math.round((last / fx.revenueTargetUsd) * 100);
+}

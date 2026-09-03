@@ -168,4 +168,12 @@ export const goodDayFixture: Fixture = {
   quotedMarginPct: 68,
   marginTargetPct: 65,
   onTimeTargetPct: 98,
+  todayPulse: { filings: 9, meetings: 6, newMatters: 5, onboardings: 3 },
+  weeklyPulse: [
+    { label: "Mon", count: 20 },
+    { label: "Tue", count: 21 },
+    { label: "Wed", count: 18 },
+    { label: "Thu", count: 24 },
+    { label: "Fri", count: 23 },
+  ],
 };

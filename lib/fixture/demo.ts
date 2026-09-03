@@ -405,6 +405,7 @@ export const demoFixture: Fixture = {
     filing: 80,
   },
   revenueByMonth: [
+    { label: "Mar", amountUsd: 452_000 },
     { label: "Apr", amountUsd: 500_000 },
     { label: "May", amountUsd: 485_000 },
     { label: "Jun", amountUsd: 510_000 },
@@ -416,4 +417,14 @@ export const demoFixture: Fixture = {
   quotedMarginPct: 68,
   marginTargetPct: 65,
   onTimeTargetPct: 98,
+  // Same-day tally, separate fact from DEMO_ACTIVITY's last-8-events log —
+  // see the TodayPulse doc comment in fixture/types.ts.
+  todayPulse: { filings: 12, meetings: 8, newMatters: 6, onboardings: 4 },
+  weeklyPulse: [
+    { label: "Mon", count: 22 },
+    { label: "Tue", count: 27 },
+    { label: "Wed", count: 19 },
+    { label: "Thu", count: 31 },
+    { label: "Fri", count: 30 },
+  ],
 };

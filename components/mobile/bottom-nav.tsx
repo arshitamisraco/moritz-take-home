@@ -1,10 +1,10 @@
 "use client";
 
 const ITEMS = [
-  { id: "m-top", label: "Overview" },
-  { id: "m-attention", label: "Attention" },
-  { id: "m-bench", label: "Bench" },
-  { id: "m-activity", label: "Activity" },
+  { id: "m-top", label: "Home" },
+  { id: "m-workload", label: "Workload" },
+  { id: "m-pulse", label: "Pulse" },
+  { id: "m-financial", label: "Finance" },
 ];
 
 export function MobileBottomNav() {
@@ -22,7 +22,7 @@ export function MobileBottomNav() {
               ? window.scrollTo({ top: 0 })
               : document.getElementById(item.id)?.scrollIntoView({ block: "start" })
           }
-          className="t-eyebrow flex-1 py-3 text-center text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          className="t-eyebrow-plain flex-1 py-3 text-center text-muted-foreground transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
           {item.label}
         </button>

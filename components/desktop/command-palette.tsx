@@ -13,11 +13,10 @@ import {
 import type { EffectiveFixture } from "@/lib/derive/apply-overlay";
 
 const SECTIONS = [
-  { id: "pillars", mobileId: "m-top", label: "Pillars" },
-  { id: "attention", mobileId: "m-attention", label: "Attention" },
-  { id: "bench", mobileId: "m-bench", label: "Bench" },
-  { id: "financial", mobileId: null, label: "Financial" },
-  { id: "activity", mobileId: "m-activity", label: "Activity" },
+  { id: "attention", mobileId: "m-top", label: "Needs attention" },
+  { id: "workload", mobileId: "m-workload", label: "Workload" },
+  { id: "pulse", mobileId: "m-pulse", label: "Firm pulse" },
+  { id: "financial", mobileId: "m-financial", label: "Financial" },
 ];
 
 /** Both trees are mounted at once (desktop hidden on mobile viewports and
@@ -104,7 +103,7 @@ export function CommandPalette({
                   value={l.name}
                   onSelect={() => {
                     onOpenChange(false);
-                    scrollToSection("bench", "m-bench");
+                    scrollToSection("workload", "m-workload");
                   }}
                   className="rounded-sm"
                 >

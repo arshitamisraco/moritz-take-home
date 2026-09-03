@@ -3,36 +3,56 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Five tiers, not one flat action style. Rest state carries no fill for any
+ * of them; the only fill on the page is --accent (#F2F0EB) on hover, at a
+ * 2px radius, over a 120ms background-color transition and nothing else —
+ * no shadow, transform, scale, or hover border. Focus draws a 2px Ink 1
+ * ring at 2px offset. Heights: h-8 for Primary/Secondary, h-7 for Ghost and
+ * the text-only Destructive that sits inside rows and the Sheet.
+ *
+ *   default (Primary)     Ink 1 fill, ground text — max one per screen
+ *   outline (Secondary)   transparent, 1px --border, Ink 1 text
+ *   ghost                 text only at rest, --accent on hover, 4px 8px pad
+ *   link                  Ink 2, 1px underline at 0.15em offset — reveals/navigates
+ *   destructive           Falu text, NO fill, --breaking-hover on hover
+ */
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-[2px] text-sm font-medium whitespace-nowrap outline-none select-none transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        default:
+          "h-8 bg-primary text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary),#000_14%)]",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "h-7 bg-transparent hover:bg-accent aria-expanded:bg-accent",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+          "h-7 bg-transparent text-destructive hover:bg-breaking-hover",
+        link: "text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground",
       },
       size: {
         default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+          "gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "gap-1 rounded-[2px] px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "gap-1 rounded-[2px] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+        "icon-xs": "size-6 rounded-[2px] [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-7 rounded-[2px]",
         "icon-lg": "size-9",
       },
     },
+    compoundVariants: [
+      // Ghost owns its own padding per the hover-inset rule (4px 8px, pulled
+      // back with -mx-2 by the caller).
+      { variant: "ghost", size: "default", class: "px-2 py-1" },
+      // Link is pure text — no box padding.
+      { variant: "link", size: "default", class: "px-0" },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

@@ -32,7 +32,10 @@
 
   --primary: var(--ink-1);
   --primary-foreground: var(--background);
-  --secondary: #fbfaf7;
+  /* the one fill in the system — hover only, never a resting surface.
+     --secondary and --accent share it so every "on-hover" tint on the
+     page traces to a single value. */
+  --secondary: #f2f0eb;
   --secondary-foreground: #1d1a17;
 
   /* --muted is the trap: shadcn reaches for it for table header fills, row
@@ -43,8 +46,13 @@
   --muted-foreground: var(--ink-3);
 
   /* one step off the ground — hover only, never a resting fill */
-  --accent: #f4f2ee;
+  --accent: #f2f0eb;
   --accent-foreground: #1d1a17;
+
+  /* the pressed state under --accent, and the tint a Breaking row takes on
+     hover in place of the neutral one */
+  --surface-active: #ebe9e3;
+  --breaking-hover: #fbe3e0;
 
   --border: #dfdedb;
   --input: #dfdedb;
@@ -114,6 +122,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-surface-active: var(--surface-active);
+  --color-breaking-hover: var(--breaking-hover);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -173,6 +183,14 @@
     line-height: 1.2;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+  /* Same mono label, minus the uppercase — for eyebrow-style text that
+     lives inside something clickable, where the casing rule forbids caps. */
+  .t-eyebrow-plain {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
   }
   .t-detail {
     font-family: var(--font-sans);

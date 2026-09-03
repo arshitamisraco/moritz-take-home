@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 
 export function MobileHeader({ onOpenPalette }: { onOpenPalette: () => void }) {
   return (
-    <header className="flex items-center justify-between border-b border-border px-4 py-4">
+    <header className="flex items-center justify-between border-b border-border px-4 py-5">
       <p className="t-section">Mysil</p>
       <button
         type="button"
