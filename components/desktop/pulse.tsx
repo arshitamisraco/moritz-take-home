@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { clockTime } from "@/lib/format";
 import type { ActivityEvent, PulseDay, TodayPulse } from "@/lib/fixture/types";
 
@@ -57,11 +57,12 @@ export function Pulse({
   const sorted = [...events].sort((a, b) => b.offsetMs - a.offsetMs);
 
   return (
-    <section id="pulse" aria-label="Firm pulse" className="flex flex-col pb-20">
-      <h2 className="t-section">Firm pulse</h2>
-      <Separator className="mt-6" />
-
-      <div className="mt-10 grid grid-cols-4 divide-x divide-border">
+    <Card id="pulse" aria-label="Firm pulse" className="mt-8">
+      <CardHeader>
+        <h2 className="t-section">Firm pulse</h2>
+      </CardHeader>
+      <CardContent>
+      <div className="grid grid-cols-4 divide-x divide-border">
         {tiles.map((t) => (
           <div key={t.label} className="flex flex-col gap-2 px-8 first:pl-0">
             <p className="t-figure text-[32px]">{t.value}</p>
@@ -90,6 +91,7 @@ export function Pulse({
           </ul>
         </details>
       )}
-    </section>
+      </CardContent>
+    </Card>
   );
 }

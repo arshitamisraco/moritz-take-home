@@ -25,7 +25,7 @@ export function QuickActions({ onOpenPalette }: { onOpenPalette: () => void }) {
   ];
 
   return (
-    <section aria-label="Quick actions" className="flex flex-col pb-24">
+    <section aria-label="Quick actions" className="mt-8 flex flex-col pb-16">
       <p className="t-eyebrow text-muted-foreground">Quick actions</p>
       <Separator className="mt-6" />
       <div className="mt-6 -mx-2 flex flex-wrap items-center gap-x-3 gap-y-1">

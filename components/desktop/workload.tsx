@@ -1,6 +1,6 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -131,11 +131,12 @@ export function Workload({
   const timedRows = rows.filter((r) => r.bucket !== "compliance");
 
   return (
-    <section id="workload" aria-label="Workload" className="flex flex-col pb-20">
-      <h2 className="t-section">Workload</h2>
-      <Separator className="mt-6" />
-
-      <div className="mt-10 grid grid-cols-2 gap-16">
+    <Card id="workload" aria-label="Workload" className="mt-8">
+      <CardHeader>
+        <h2 className="t-section">Workload</h2>
+      </CardHeader>
+      <CardContent>
+      <div className="grid grid-cols-2 gap-16">
         <div>
           <p className="t-eyebrow text-muted-foreground">Lawyer capacity — {over.length} overloaded</p>
           <ul className="mt-6 flex flex-col gap-4">
@@ -265,6 +266,7 @@ export function Workload({
           </div>
         </details>
       )}
-    </section>
+      </CardContent>
+    </Card>
   );
 }

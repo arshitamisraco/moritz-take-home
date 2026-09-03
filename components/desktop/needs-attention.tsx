@@ -2,6 +2,7 @@
 
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ledger/status-badge";
 import type { AtRiskRow } from "@/lib/derive/matters";
 import { attentionSeverity, type AttentionSummary } from "@/lib/derive/attention-summary";
@@ -40,71 +41,76 @@ export function NeedsAttention({
   ];
 
   return (
-    <section id="attention" aria-label="Needs attention" className="pt-16 pb-20">
-      <div className="flex items-center gap-2">
-        {!quiet && <TriangleAlert className="size-4" aria-hidden="true" />}
-        <h1 className="t-section">{quiet ? "Nothing needs attention" : "Needs attention"}</h1>
-      </div>
-
-      {complianceRow && (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border border-breaking bg-breaking-tint px-6 py-6">
-          <button
-            type="button"
-            onClick={() => onOpenMatter(complianceRow.matter.id)}
-            className="flex flex-wrap items-center gap-4 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            <StatusBadge variant="breaking" label="compliance" />
-            <span className="t-body">
-              {complianceRow.matter.name} <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
-            </span>
-            <span className="t-detail" style={{ color: "var(--ink-2)" }}>
-              Conflicts not cleared, work started
-            </span>
-          </button>
-          {complianceRow.matter.conflictsExpedited ? (
-            <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
-          ) : (
-            <Button
-              className="shrink-0"
-              onClick={() =>
-                dispatch({
-                  type: "expedite",
-                  matterId: complianceRow.matter.id,
-                  matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
-                })
-              }
-            >
-              Expedite clearance
-            </Button>
-          )}
+    <Card id="attention" aria-label="Needs attention" className="mt-8">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          {!quiet && <TriangleAlert className="size-4" aria-hidden="true" />}
+          <h1 className="t-section">{quiet ? "Nothing needs attention" : "Needs attention"}</h1>
         </div>
-      )}
-
-      {quiet ? (
-        <p className="mt-6 t-body">Nothing needs you right now — every matter is inside its promised window.</p>
-      ) : (
-        <div className="mt-8 -mx-6 grid grid-cols-3 divide-x divide-border border-y border-border">
-          {stats.map((s) => (
+      </CardHeader>
+      <CardContent>
+        {complianceRow && (
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-breaking bg-breaking-tint px-6 py-6">
             <button
-              key={s.label}
               type="button"
-              onClick={() => scrollToSection(s.target)}
-              className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              onClick={() => onOpenMatter(complianceRow.matter.id)}
+              className="flex flex-wrap items-center gap-4 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              <div className="flex items-center justify-between w-full gap-2">
-                <p className="t-eyebrow-plain text-muted-foreground">{s.label}</p>
-                <StatusBadge variant={s.state} />
-              </div>
-              <p
-                className={cn("t-figure", s.state === "breaking" ? "text-breaking" : "text-foreground")}
-              >
-                {s.count}
-              </p>
-              <p className="t-detail text-muted-foreground">{s.detail}</p>
+              <StatusBadge variant="breaking" label="compliance" />
+              <span className="t-body">
+                {complianceRow.matter.name} <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
+              </span>
+              <span className="t-detail" style={{ color: "var(--ink-2)" }}>
+                Conflicts not cleared, work started
+              </span>
             </button>
-          ))}
-        </div>
-      )}
-    </section>
+            {complianceRow.matter.conflictsExpedited ? (
+              <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
+            ) : (
+              <Button
+                className="shrink-0"
+                onClick={() =>
+                  dispatch({
+                    type: "expedite",
+                    matterId: complianceRow.matter.id,
+                    matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
+                  })
+                }
+              >
+                Expedite clearance
+              </Button>
+            )}
+          </div>
+        )}
+
+        {quiet ? (
+          <p className={cn("t-body", complianceRow && "mt-6")}>
+            Nothing needs you right now — every matter is inside its promised window.
+          </p>
+        ) : (
+          <div className={cn("grid grid-cols-3 divide-x divide-border rounded-md border border-border", complianceRow && "mt-6")}>
+            {stats.map((s) => (
+              <button
+                key={s.label}
+                type="button"
+                onClick={() => scrollToSection(s.target)}
+                className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-[background-color] duration-[120ms] ease-out first:rounded-l-md last:rounded-r-md hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              >
+                <div className="flex items-center justify-between w-full gap-2">
+                  <p className="t-eyebrow-plain text-muted-foreground">{s.label}</p>
+                  <StatusBadge variant={s.state} />
+                </div>
+                <p
+                  className={cn("t-figure", s.state === "breaking" ? "text-breaking" : "text-foreground")}
+                >
+                  {s.count}
+                </p>
+                <p className="t-detail text-muted-foreground">{s.detail}</p>
+              </button>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
