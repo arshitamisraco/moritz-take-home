@@ -1,7 +1,7 @@
 "use client";
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 import {
   ChartContainer,
@@ -42,11 +42,12 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
   const latest = fx.revenueByMonth[fx.revenueByMonth.length - 1];
 
   return (
-    <section id="financial" aria-label="Financial health" className="flex flex-col pb-20">
-      <h2 className="t-section">Financial health</h2>
-      <Separator className="mt-6" />
-
-      <div className="mt-10 grid grid-cols-2 gap-16">
+    <Card id="financial" aria-label="Financial health" className="mt-8">
+      <CardHeader>
+        <h2 className="t-section">Financial health</h2>
+      </CardHeader>
+      <CardContent>
+      <div className="grid grid-cols-2 gap-16">
         <div>
           <div className="flex items-baseline justify-between">
             <p className="t-eyebrow text-muted-foreground">Revenue this month</p>
@@ -173,6 +174,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
           </div>
         </div>
       </details>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
