@@ -37,6 +37,8 @@
   --brand-steady-tint: #dde3d5; /* Moss, tinted pale */
   --brand-straining-tint: #e3c8a6; /* Warm Sand shifted toward Terracotta */
   --brand-terracotta-tint: #f3ded2; /* Terracotta, tinted pale */
+  --brand-terracotta-tint-hover: #edcbba; /* Terracotta, tinted pale — one step warmer, for hover feedback */
+  --brand-moss-pressed: #626c57; /* Moss, darkened one step — the pressed state under --accent */
 
   /* ---- 2. semantic (shadcn) tokens — reference tier 1 only ---- */
   --background: var(--brand-bone);
@@ -63,6 +65,11 @@
 
   --accent: var(--brand-moss);
   --accent-foreground: var(--brand-bone);
+
+  /* the pressed state under --accent, and the tint a Breaking row takes on
+     hover in place of the neutral one */
+  --surface-active: var(--brand-moss-pressed);
+  --breaking-hover: var(--brand-terracotta-tint-hover);
 
   --border: var(--brand-neutral-border);
   --input: var(--brand-neutral-border);
@@ -132,6 +139,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-surface-active: var(--surface-active);
+  --color-breaking-hover: var(--breaking-hover);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -191,6 +200,14 @@
     line-height: 1.2;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+  /* Same mono label, minus the uppercase — for eyebrow-style text that
+     lives inside something clickable, where the casing rule forbids caps. */
+  .t-eyebrow-plain {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
   }
   .t-detail {
     font-family: var(--font-sans);

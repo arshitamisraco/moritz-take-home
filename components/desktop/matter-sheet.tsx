@@ -75,14 +75,14 @@ export function MatterSheet({
       <SheetContent side="right" className="w-full gap-0 overflow-y-auto rounded-none sm:max-w-md">
         {matter && (
           <>
-            <SheetHeader className="gap-1 border-b border-border pb-4">
+            <SheetHeader className="gap-1 border-b border-border pb-6">
               <SheetTitle className="t-section text-left font-normal">{matter.name}</SheetTitle>
               <SheetDescription className="t-body text-left text-muted-foreground">
                 {matter.client}
               </SheetDescription>
             </SheetHeader>
 
-            <div className="flex flex-col gap-4 px-4 py-5">
+            <div className="flex flex-col gap-6 px-6 py-8">
               <Field label="type">
                 <span className="t-body">{TYPE_LABEL[matter.type]}</span>
               </Field>
@@ -144,7 +144,7 @@ export function MatterSheet({
 
               <Separator />
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <p className="t-eyebrow text-muted-foreground">actions</p>
                 <RowActions
                   matter={matter}
@@ -156,12 +156,12 @@ export function MatterSheet({
 
               <Separator />
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 <p className="t-eyebrow text-muted-foreground">history</p>
                 {history.length === 0 ? (
                   <p className="t-detail text-muted-foreground">No recorded activity</p>
                 ) : (
-                  <ul className="flex flex-col gap-2">
+                  <ul className="flex flex-col gap-3">
                     {history.map((e) => (
                       <li key={e.id} className="flex items-baseline justify-between gap-3">
                         <span className="t-detail">{KIND_LABEL[e.kind] ?? e.kind}</span>
