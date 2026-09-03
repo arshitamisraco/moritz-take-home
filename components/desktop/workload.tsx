@@ -170,7 +170,7 @@ export function Workload({
                   <button
                     type="button"
                     onClick={() => onOpenMatter(r.matter.id)}
-                    className="flex h-11 w-full items-center justify-between gap-3 px-3 text-left rounded-[2px] transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                    className="flex h-11 w-full items-center justify-between gap-3 px-3 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                   >
                     <span className="t-body">
                       {r.matter.name} <span className="text-muted-foreground">· {r.matter.client}</span>
@@ -205,10 +205,10 @@ export function Workload({
                   </Button>
                 }
               />
-              <DropdownMenuContent align="end" className="w-56 rounded-[2px]">
+              <DropdownMenuContent align="end" className="w-56 rounded-lg">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    className="rounded-[2px]"
+                    className="rounded-md"
                     onClick={() =>
                       undecl.forEach((l) =>
                         dispatch({ type: "requestAvailability", lawyerId: l.id, lawyerName: l.name })
@@ -220,7 +220,7 @@ export function Workload({
                   {undecl.map((l) => (
                     <DropdownMenuItem
                       key={l.id}
-                      className="rounded-[2px]"
+                      className="rounded-md"
                       onClick={() =>
                         dispatch({ type: "requestAvailability", lawyerId: l.id, lawyerName: l.name })
                       }
@@ -240,7 +240,7 @@ export function Workload({
             <ExceptionList items={exceptions.slice(0, EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
             {exceptions.length > EXCEPTION_PREVIEW && (
               <details className="mt-1">
-                <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-[2px] w-fit">
+                <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
                   {exceptions.length - EXCEPTION_PREVIEW} more unplaced
                 </summary>
                 <ExceptionList items={exceptions.slice(EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
@@ -257,7 +257,7 @@ export function Workload({
 
       {timedRows.length > 0 && (
         <details className="mt-12 border-t border-border pt-6">
-          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-[2px] w-fit">
+          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
             View all {timedRows.length} flagged matters
           </summary>
           <div className="mt-6">

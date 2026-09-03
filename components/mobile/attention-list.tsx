@@ -81,7 +81,7 @@ export function MobileAttentionList({
                   type="button"
                   onClick={() => dispatch(action.action)}
                   className={cn(
-                    "t-detail -mx-2 w-fit rounded-[2px] px-2 py-1 text-left transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                    "t-detail -mx-2 w-fit rounded-md px-2 py-1 text-left transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                     action.action.type === "escalate"
                       ? "text-destructive hover:bg-breaking-hover"
                       : "text-foreground hover:bg-accent"

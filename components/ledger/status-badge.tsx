@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
  */
 
 const statusBadgeVariants = cva(
-  "gap-1.5 rounded-[2px] border px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase",
+  "gap-1.5 rounded-sm border px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase",
   {
     variants: {
       variant: {

@@ -74,7 +74,7 @@ export function Pulse({
 
       {sorted.length > 0 && (
         <details className="mt-12 border-t border-border pt-6">
-          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-[2px] w-fit">
+          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
             Recent activity
           </summary>
           <ul className="mt-4 flex flex-col divide-y divide-border">

@@ -46,7 +46,7 @@ export function ReassignMenu({
           </Button>
         }
       />
-      <DropdownMenuContent align="start" className="w-56 rounded-[2px]">
+      <DropdownMenuContent align="start" className="w-56 rounded-lg">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="t-eyebrow text-muted-foreground">
             headroom
@@ -55,7 +55,7 @@ export function ReassignMenu({
             <DropdownMenuItem
               key={lawyer.id}
               onClick={() => onPick(lawyer.id, lawyer.name)}
-              className="flex items-center justify-between gap-3 rounded-[2px]"
+              className="flex items-center justify-between gap-3 rounded-md"
             >
               <span className="t-body text-[14px]">{lawyer.name}</span>
               <LoadRatio committed={lawyer.committedMatters} declared={lawyer.declaredAvailability} />

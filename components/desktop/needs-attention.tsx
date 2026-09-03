@@ -51,7 +51,7 @@ export function NeedsAttention({
           <button
             type="button"
             onClick={() => onOpenMatter(complianceRow.matter.id)}
-            className="flex flex-wrap items-center gap-4 text-left rounded-[2px] transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="flex flex-wrap items-center gap-4 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <StatusBadge variant="breaking" label="compliance" />
             <span className="t-body">
