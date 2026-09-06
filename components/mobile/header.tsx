@@ -17,7 +17,7 @@ export function MobileHeader({
           type="button"
           onClick={onOpenPalette}
           aria-label="Search"
-          className="rounded-sm p-2 text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="rounded-sm p-2 text-muted-foreground focus-ring"
         >
           <Search className="size-4" aria-hidden="true" />
         </button>
@@ -25,7 +25,7 @@ export function MobileHeader({
           type="button"
           onClick={onNewMatter}
           aria-label="New matter"
-          className="rounded-sm p-2 text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="rounded-sm p-2 text-muted-foreground focus-ring"
         >
           <Plus className="size-4" aria-hidden="true" />
         </button>

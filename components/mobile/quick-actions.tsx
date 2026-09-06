@@ -21,7 +21,7 @@ export function MobileQuickActions({ onOpenPalette }: { onOpenPalette: () => voi
           key={a.label}
           type="button"
           onClick={a.onClick}
-          className="flex flex-col items-center gap-2 px-2 py-6 text-foreground transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          className="flex flex-col items-center gap-2 px-2 py-6 text-foreground transition-wash hover:bg-accent active:bg-surface-active focus-ring-inset"
         >
           <a.icon className="size-4" aria-hidden="true" />
           <span className="t-eyebrow-plain text-center text-muted-foreground">{a.label}</span>

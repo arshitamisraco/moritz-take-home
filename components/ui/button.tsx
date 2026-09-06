@@ -19,12 +19,12 @@ import { cn } from "@/lib/utils"
  *   destructive           Terracotta text, NO fill, neutral wash on hover
  */
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-md text-sm font-medium whitespace-nowrap outline-none select-none transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-md text-sm font-medium whitespace-nowrap outline-none select-none transition-wash focus-ring disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "h-8 bg-primary text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary),#fff_16%)]",
+          "h-8 bg-primary text-primary-foreground hover:bg-primary-hover",
         outline:
           "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:
@@ -33,7 +33,7 @@ const buttonVariants = cva(
           "h-7 bg-transparent hover:bg-accent aria-expanded:bg-accent",
         destructive:
           "h-7 bg-transparent text-destructive hover:bg-surface-active",
-        link: "text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground",
+        link: "text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground",
       },
       size: {
         default:

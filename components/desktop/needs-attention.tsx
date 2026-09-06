@@ -23,12 +23,10 @@ export function NeedsAttention({
   rows,
   summary,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   summary: AttentionSummary;
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const complianceRow = rows.find((r) => r.bucket === "compliance") ?? null;
   const quiet = summary.deadlines === 0 && summary.overloaded === 0 && summary.awaitingAction === 0 && !complianceRow;
@@ -51,19 +49,15 @@ export function NeedsAttention({
       <CardContent>
         {complianceRow && (
           <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-breaking bg-breaking-tint px-6 py-6">
-            <button
-              type="button"
-              onClick={() => onOpenMatter(complianceRow.matter.id)}
-              className="flex flex-wrap items-center gap-4 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-surface-active focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
+            <div className="flex flex-wrap items-center gap-4">
               <StatusBadge variant="breaking" label="compliance" />
               <span className="t-body">
                 {complianceRow.matter.name} <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
               </span>
-              <span className="t-detail" style={{ color: "var(--ink-2)" }}>
+              <span className="t-detail text-ink-2">
                 Conflicts not cleared, work started
               </span>
-            </button>
+            </div>
             {complianceRow.matter.conflictsExpedited ? (
               <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
             ) : (
@@ -94,7 +88,7 @@ export function NeedsAttention({
                 key={s.label}
                 type="button"
                 onClick={() => scrollToSection(s.target)}
-                className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-[background-color] duration-[120ms] ease-out first:rounded-l-md last:rounded-r-md hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-wash first:rounded-l-md last:rounded-r-md hover:bg-accent active:bg-surface-active focus-ring-inset"
               >
                 <div className="flex items-center justify-between w-full gap-2">
                   <p className="t-eyebrow-plain text-muted-foreground">{s.label}</p>

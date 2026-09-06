@@ -34,11 +34,9 @@ function primaryAction(row: AtRiskRow): { label: string; action: LedgerAction } 
 export function MobileAttentionList({
   rows,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const withHeaders = rows.map((row, i) => ({
     row,
@@ -57,11 +55,7 @@ export function MobileAttentionList({
                 {BUCKET_LABEL[row.bucket]}
               </p>
             )}
-            <button
-              type="button"
-              onClick={() => onOpenMatter(row.matter.id)}
-              className="flex w-full flex-col gap-1.5 px-4 pt-4 pb-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-            >
+            <div className="flex w-full flex-col gap-1.5 px-4 pt-4 pb-2">
               {row.bucket !== "compliance" && row.matter.deadlineKind && (
                 <StatusBadge variant={row.matter.deadlineKind} />
               )}
@@ -69,19 +63,18 @@ export function MobileAttentionList({
               <p className="t-body">{row.matter.name}</p>
               <p className="t-detail text-muted-foreground">{row.matter.client}</p>
               <p
-                className={cn("t-detail", row.matter.halted && "line-through decoration-1")}
-                style={{ color: "var(--ink-2)" }}
+                className={cn("t-detail text-ink-2", row.matter.halted && "line-through decoration-1")}
               >
                 {attentionDetail(row.matter, row.bucket)}
               </p>
-            </button>
+            </div>
             {action && (
               <div className="px-4 pb-4">
                 <button
                   type="button"
                   onClick={() => dispatch(action.action)}
                   className={cn(
-                    "t-detail -mx-2 w-fit rounded-md px-2 py-1 text-left transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                    "t-detail -mx-2 w-fit rounded-md px-2 py-1 text-left transition-wash focus-ring",
                     action.action.type === "escalate"
                       ? "text-destructive hover:bg-surface-active"
                       : "text-foreground hover:bg-accent"

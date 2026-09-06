@@ -15,12 +15,10 @@ export function MobileNeedsAttention({
   rows,
   summary,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   summary: AttentionSummary;
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const complianceRow = rows.find((r) => r.bucket === "compliance") ?? null;
   const quiet = summary.deadlines === 0 && summary.overloaded === 0 && summary.awaitingAction === 0 && !complianceRow;
@@ -35,7 +33,7 @@ export function MobileNeedsAttention({
   return (
     <>
       {complianceRow && (
-        <MobileComplianceBreach row={complianceRow} dispatch={dispatch} onOpenMatter={onOpenMatter} />
+        <MobileComplianceBreach row={complianceRow} dispatch={dispatch} />
       )}
       {quiet ? (
         <div className="border-b border-border px-4 py-7">
@@ -49,7 +47,7 @@ export function MobileNeedsAttention({
               key={s.label}
               type="button"
               onClick={scrollToWorkload}
-              className="flex flex-col items-start gap-2 px-4 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              className="flex flex-col items-start gap-2 px-4 py-6 text-left focus-ring-inset"
             >
               <StatusBadge variant={s.state} />
               <p className={cn("t-figure text-[28px]", s.state === "breaking" ? "text-breaking" : "text-foreground")}>

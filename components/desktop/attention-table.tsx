@@ -34,13 +34,11 @@ export function AttentionTable({
   fx,
   headroomList,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   fx: EffectiveFixture;
   headroomList: LawyerLoad[];
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   if (rows.length === 0) {
     return null;
@@ -73,16 +71,9 @@ export function AttentionTable({
                   key={row.matter.id}
                   data-halted={row.matter.halted || undefined}
                   className={cn(
-                    "group/row h-16 cursor-pointer border-border transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-                    row.bucket === "compliance"
-                      ? "hover:bg-surface-active"
-                      : "hover:bg-accent active:bg-surface-active"
+                    "group/row h-16 border-border transition-wash",
+                    row.bucket === "compliance" ? "hover:bg-surface-active" : "hover:bg-accent"
                   )}
-                  onClick={() => onOpenMatter(row.matter.id)}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") onOpenMatter(row.matter.id);
-                  }}
                 >
                   <TableCell className="w-[26%] py-4 align-top whitespace-normal">
                     <p className="t-body">{row.matter.name}</p>
@@ -99,10 +90,9 @@ export function AttentionTable({
 
                   <TableCell
                     className={cn(
-                      "w-[28%] py-4 align-top whitespace-normal t-detail",
+                      "w-[28%] py-4 align-top whitespace-normal t-detail text-ink-2",
                       row.matter.halted && "line-through decoration-1"
                     )}
-                    style={{ color: "var(--ink-2)" }}
                   >
                     {attentionDetail(row.matter, row.bucket)}
                   </TableCell>
@@ -118,10 +108,7 @@ export function AttentionTable({
                     )}
                   </TableCell>
 
-                  <TableCell
-                    className="w-[20%] py-4 align-top text-right"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <TableCell className="w-[20%] py-4 align-top text-right">
                     <RowActions
                       matter={row.matter}
                       candidates={headroomList}

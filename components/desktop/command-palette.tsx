@@ -40,12 +40,10 @@ export function CommandPalette({
   fx,
   open,
   onOpenChange,
-  onOpenMatter,
 }: {
   fx: EffectiveFixture;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -85,7 +83,7 @@ export function CommandPalette({
                 value={`${m.name} ${m.client}`}
                 onSelect={() => {
                   onOpenChange(false);
-                  onOpenMatter(m.id);
+                  scrollToSection("attention", "m-top");
                 }}
                 className="rounded-sm"
               >

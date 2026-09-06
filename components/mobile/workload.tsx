@@ -33,7 +33,7 @@ function ExceptionList({
             <p className="t-detail">
               {m.name} <span className="text-muted-foreground">· {m.client}</span>
             </p>
-            <p className="t-detail" style={{ color: "var(--ink-2)" }}>
+            <p className="t-detail text-ink-2">
               {unplacedReasonLabel(m.unplacedReason)}
             </p>
           </div>
@@ -91,12 +91,10 @@ export function MobileWorkload({
   fx,
   rows,
   dispatch,
-  onOpenMatter,
 }: {
   fx: EffectiveFixture;
   rows: AtRiskRow[];
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const outliers = capacityOutliers(fx, 4);
   const capCeiling = Math.max(100, ...outliers.map((o) => o.pct));
@@ -136,19 +134,13 @@ export function MobileWorkload({
       {urgent.length > 0 && (
         <ul className="mt-3 flex flex-col divide-y divide-border">
           {urgent.map((r) => (
-            <li key={r.matter.id}>
-              <button
-                type="button"
-                onClick={() => onOpenMatter(r.matter.id)}
-                className="flex w-full items-baseline justify-between gap-3 py-3 text-left"
-              >
-                <span className="t-detail">
-                  {r.matter.name} <span className="text-muted-foreground">· {r.matter.client}</span>
-                </span>
-                <span className="t-detail shrink-0 text-muted-foreground">
-                  {r.matter.deadlineOffsetMs !== null && dayLabel(r.matter.deadlineOffsetMs)}
-                </span>
-              </button>
+            <li key={r.matter.id} className="flex items-baseline justify-between gap-3 py-3">
+              <span className="t-detail">
+                {r.matter.name} <span className="text-muted-foreground">· {r.matter.client}</span>
+              </span>
+              <span className="t-detail shrink-0 text-muted-foreground">
+                {r.matter.deadlineOffsetMs !== null && dayLabel(r.matter.deadlineOffsetMs)}
+              </span>
             </li>
           ))}
         </ul>
@@ -160,7 +152,7 @@ export function MobileWorkload({
           <ExceptionList items={exceptions.slice(0, EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
           {exceptions.length > EXCEPTION_PREVIEW && (
             <details className="mt-1">
-              <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
+              <summary className="t-detail cursor-pointer text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
                 {exceptions.length - EXCEPTION_PREVIEW} more unplaced
               </summary>
               <ExceptionList items={exceptions.slice(EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
@@ -186,11 +178,11 @@ export function MobileWorkload({
 
       {timedRows.length > 0 && (
         <details className="mt-6 border-t border-border pt-5 -mx-4">
-          <summary className="t-detail cursor-pointer px-4 text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
+          <summary className="t-detail cursor-pointer px-4 text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
             View all {timedRows.length} flagged matters
           </summary>
           <div className="mt-4">
-            <MobileAttentionList rows={timedRows} dispatch={dispatch} onOpenMatter={onOpenMatter} />
+            <MobileAttentionList rows={timedRows} dispatch={dispatch} />
           </div>
         </details>
       )}

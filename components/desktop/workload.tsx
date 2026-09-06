@@ -45,7 +45,7 @@ function ExceptionList({
             <p className="t-body">
               {m.name} <span className="text-muted-foreground">· {m.client}</span>
             </p>
-            <p className="t-detail" style={{ color: "var(--ink-2)" }}>
+            <p className="t-detail text-ink-2">
               {unplacedReasonLabel(m.unplacedReason)}
             </p>
           </div>
@@ -113,12 +113,10 @@ export function Workload({
   fx,
   rows,
   dispatch,
-  onOpenMatter,
 }: {
   fx: EffectiveFixture;
   rows: AtRiskRow[];
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const outliers = capacityOutliers(fx);
   const capCeiling = Math.max(100, ...outliers.map((o) => o.pct));
@@ -165,25 +163,19 @@ export function Workload({
             ))}
           </div>
           {urgent.length > 0 ? (
-            <ul className="mt-6 -mx-3 flex flex-col divide-y divide-border">
+            <ul className="mt-6 flex flex-col divide-y divide-border">
               {urgent.map((r) => (
-                <li key={r.matter.id}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenMatter(r.matter.id)}
-                    className="flex h-11 w-full items-center justify-between gap-3 px-3 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-                  >
-                    <span className="t-body">
-                      {r.matter.name} <span className="text-muted-foreground">· {r.matter.client}</span>
-                    </span>
-                    <span className="t-detail shrink-0 text-muted-foreground">
-                      {r.matter.deadlineOffsetMs !== null && (
-                        <>
-                          {dayLabel(r.matter.deadlineOffsetMs)}, {clockTime(r.matter.deadlineOffsetMs)}
-                        </>
-                      )}
-                    </span>
-                  </button>
+                <li key={r.matter.id} className="flex h-11 items-center justify-between gap-3">
+                  <span className="t-body">
+                    {r.matter.name} <span className="text-muted-foreground">· {r.matter.client}</span>
+                  </span>
+                  <span className="t-detail shrink-0 text-muted-foreground">
+                    {r.matter.deadlineOffsetMs !== null && (
+                      <>
+                        {dayLabel(r.matter.deadlineOffsetMs)}, {clockTime(r.matter.deadlineOffsetMs)}
+                      </>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -241,7 +233,7 @@ export function Workload({
             <ExceptionList items={exceptions.slice(0, EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
             {exceptions.length > EXCEPTION_PREVIEW && (
               <details className="mt-1">
-                <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
+                <summary className="t-detail cursor-pointer text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-ring rounded-sm w-fit">
                   {exceptions.length - EXCEPTION_PREVIEW} more unplaced
                 </summary>
                 <ExceptionList items={exceptions.slice(EXCEPTION_PREVIEW)} room={room} dispatch={dispatch} />
@@ -258,11 +250,11 @@ export function Workload({
 
       {timedRows.length > 0 && (
         <details className="mt-12 border-t border-border pt-6">
-          <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
+          <summary className="t-detail cursor-pointer text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-ring rounded-sm w-fit">
             View all {timedRows.length} flagged matters
           </summary>
           <div className="mt-6">
-            <AttentionTable rows={rows} fx={fx} headroomList={room} dispatch={dispatch} onOpenMatter={onOpenMatter} />
+            <AttentionTable rows={rows} fx={fx} headroomList={room} dispatch={dispatch} />
           </div>
         </details>
       )}

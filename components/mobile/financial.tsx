@@ -31,7 +31,7 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
       </p>
 
       <details className="mt-4">
-        <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
+        <summary className="t-detail cursor-pointer text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground">
           View breakdown
         </summary>
         <p className="t-detail mt-2 text-muted-foreground">

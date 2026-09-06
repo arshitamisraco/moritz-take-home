@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 /* ---------------------------------------------------------------------- *
  * Mysil — design token layer.
  *
@@ -67,9 +65,12 @@
   --popover: var(--paper-raised);
   --popover-foreground: var(--ink-1);
 
-  /* primary is ink — a near-black control, at most one per screen. */
+  /* primary is ink — a near-black control, at most one per screen. Its one
+     hover step warms the fill by 16% of the raised-paper primitive — the
+     same single flat move every other interactive surface makes. */
   --primary: var(--n-900);
   --primary-foreground: var(--paper);
+  --primary-hover: color-mix(in oklab, var(--primary), var(--paper-raised) 16%);
   --secondary: var(--n-100);
   --secondary-foreground: var(--ink-1);
 
@@ -152,6 +153,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -245,5 +247,28 @@
     font-size: 44px;
     line-height: 1;
     letter-spacing: -0.02em;
+  }
+}
+
+/* ---------------------------------------------------------------------- *
+ * Interaction primitives — the one background transition and the one focus
+ * ring the whole product uses. The Button component and every non-<Button>
+ * interactive surface (stat tiles, clickable table rows, disclosure
+ * summaries) apply these instead of re-declaring the values inline, so
+ * everything that responds to the pointer or the keyboard moves and focuses
+ * alike. `-inset` is for full-bleed surfaces where an outset ring would clip.
+ * ---------------------------------------------------------------------- */
+
+@layer utilities {
+  .transition-wash {
+    transition: background-color 120ms ease-out;
+  }
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .focus-ring-inset:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
 }

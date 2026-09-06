@@ -16,21 +16,19 @@ export function MobileShell({
   rows,
   summary,
   dispatch,
-  onOpenMatter,
   onOpenPalette,
 }: {
   fx: EffectiveFixture;
   rows: AtRiskRow[];
   summary: AttentionSummary;
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
   onOpenPalette: () => void;
 }) {
   return (
     <div id="m-top">
       <MobileHeader onOpenPalette={onOpenPalette} onNewMatter={onOpenPalette} />
-      <MobileNeedsAttention rows={rows} summary={summary} dispatch={dispatch} onOpenMatter={onOpenMatter} />
-      <MobileWorkload fx={fx} rows={rows} dispatch={dispatch} onOpenMatter={onOpenMatter} />
+      <MobileNeedsAttention rows={rows} summary={summary} dispatch={dispatch} />
+      <MobileWorkload fx={fx} rows={rows} dispatch={dispatch} />
       <MobilePulse pulse={fx.todayPulse} weeklyPulse={fx.weeklyPulse} />
       <MobileFinancial fx={fx} />
       <MobileQuickActions onOpenPalette={onOpenPalette} />

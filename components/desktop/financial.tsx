@@ -108,7 +108,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
       </div>
 
       <details className="mt-12 border-t border-border pt-6">
-        <summary className="t-detail cursor-pointer text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm w-fit">
+        <summary className="t-detail cursor-pointer text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-ring rounded-sm w-fit">
           Margin detail — {belowFloor.length} matter{belowFloor.length === 1 ? "" : "s"} below the {MARGIN_FLOOR_PCT}% floor
         </summary>
 
