@@ -4,18 +4,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Five tiers, not one flat action style. Rest state carries no fill for any
- * of them; the only fill on the page is --accent (Moss) on hover, at a
- * 6px radius, over a 120ms background-color transition and nothing else —
- * no shadow, transform, scale, or hover border. Focus draws a 2px ring
- * offset from the button. Heights: h-8 for Primary/Secondary, h-7 for Ghost
- * and the text-only Destructive that sits inside rows and the Sheet.
+ * Five tiers, not one flat action style. Rest state carries no fill for
+ * the quiet tiers; hover warms them by a single flat step of neutral wash
+ * (--accent), at a 2px radius, over a 120ms background-color transition and
+ * nothing else — no hue, shadow, transform, scale, or hover border. Focus
+ * draws a 2px near-black ring offset from the button. Heights: h-8 for
+ * Primary/Secondary, h-7 for Ghost and the text-only Destructive that sits
+ * inside rows and the Sheet.
  *
- *   default (Primary)     Slate Blue fill, Bone text — max one per screen
- *   outline (Secondary)   transparent, 1px --border, Charcoal text
- *   ghost                 text only at rest, --accent on hover, 4px 8px pad
+ *   default (Primary)     near-black ink fill, paper text — max one per screen
+ *   outline (Secondary)   transparent, 1px --border, ink text
+ *   ghost                 text only at rest, neutral wash on hover, 4px 8px pad
  *   link                  Ink 2, 1px underline at 0.15em offset — reveals/navigates
- *   destructive           Terracotta text, NO fill, --breaking-hover on hover
+ *   destructive           Terracotta text, NO fill, neutral wash on hover
  */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-md text-sm font-medium whitespace-nowrap outline-none select-none transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -23,7 +24,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "h-8 bg-primary text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary),#000_14%)]",
+          "h-8 bg-primary text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary),#fff_16%)]",
         outline:
           "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:
@@ -31,7 +32,7 @@ const buttonVariants = cva(
         ghost:
           "h-7 bg-transparent hover:bg-accent aria-expanded:bg-accent",
         destructive:
-          "h-7 bg-transparent text-destructive hover:bg-breaking-hover",
+          "h-7 bg-transparent text-destructive hover:bg-surface-active",
         link: "text-[color:var(--ink-2)] underline decoration-1 underline-offset-[0.15em] hover:text-foreground",
       },
       size: {

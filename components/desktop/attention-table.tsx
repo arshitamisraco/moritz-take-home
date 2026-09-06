@@ -75,7 +75,7 @@ export function AttentionTable({
                   className={cn(
                     "group/row h-16 cursor-pointer border-border transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
                     row.bucket === "compliance"
-                      ? "hover:bg-breaking-hover"
+                      ? "hover:bg-surface-active"
                       : "hover:bg-accent active:bg-surface-active"
                   )}
                   onClick={() => onOpenMatter(row.matter.id)}

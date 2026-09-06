@@ -38,7 +38,7 @@ export function Dashboard({ fixture }: { fixture: Fixture }) {
     <>
       <div className="hidden md:block">
         <main className="mx-auto max-w-[1200px] px-6">
-          <Header onOpenPalette={() => setPaletteOpen(true)} />
+          <Header onOpenPalette={() => setPaletteOpen(true)} onNewMatter={() => setPaletteOpen(true)} />
 
           <NeedsAttention rows={rows} summary={summary} dispatch={dispatch} onOpenMatter={setOpenMatterId} />
 

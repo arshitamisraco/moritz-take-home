@@ -83,7 +83,7 @@ export function MobileAttentionList({
                   className={cn(
                     "t-detail -mx-2 w-fit rounded-md px-2 py-1 text-left transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                     action.action.type === "escalate"
-                      ? "text-destructive hover:bg-breaking-hover"
+                      ? "text-destructive hover:bg-surface-active"
                       : "text-foreground hover:bg-accent"
                   )}
                 >

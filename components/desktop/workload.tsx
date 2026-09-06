@@ -89,7 +89,7 @@ function CapacityBar({
       <div
         className={cn(
           "h-1.5",
-          state === "breaking" ? "bg-breaking" : state === "straining" ? "bg-straining" : "bg-chart-4"
+          state === "breaking" ? "bg-breaking" : state === "straining" ? "bg-chart-2" : "bg-chart-4"
         )}
         style={{ width: `${(pct / ceiling) * 100}%` }}
       />

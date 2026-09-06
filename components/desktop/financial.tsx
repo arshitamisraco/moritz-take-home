@@ -64,7 +64,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
               <XAxis
                 dataKey="label"
                 interval={0}
-                tick={{ fontFamily: "var(--font-mono)", fontSize: 10, fill: "var(--ink-3)" }}
+                tick={{ fontFamily: "var(--font-mono)", fontSize: 12, fill: "var(--ink-3)" }}
                 axisLine={{ stroke: "var(--border)" }}
                 tickLine={false}
               />
@@ -121,7 +121,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
                 <XAxis
                   type="number"
                   domain={[0, 100]}
-                  tick={{ fontFamily: "var(--font-mono)", fontSize: 10, fill: "var(--ink-3)" }}
+                  tick={{ fontFamily: "var(--font-mono)", fontSize: 12, fill: "var(--ink-3)" }}
                   tickFormatter={(v) => `${v}%`}
                   axisLine={{ stroke: "var(--border)" }}
                   tickLine={false}
@@ -130,7 +130,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
                   type="category"
                   dataKey="label"
                   width={88}
-                  tick={{ fontFamily: "var(--font-sans)", fontSize: 11, fill: "var(--foreground)" }}
+                  tick={{ fontFamily: "var(--font-sans)", fontSize: 12, fill: "var(--foreground)" }}
                   axisLine={false}
                   tickLine={false}
                 />

@@ -15,7 +15,7 @@ export function MobileQuickActions({ onOpenPalette }: { onOpenPalette: () => voi
   ];
 
   return (
-    <section id="m-actions" className="grid grid-cols-4 divide-x divide-border border-b border-border pb-16">
+    <section id="m-actions" className="grid grid-cols-4 divide-x divide-border border-b border-border pb-8">
       {actions.map((a) => (
         <button
           key={a.label}
