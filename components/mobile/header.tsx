@@ -1,6 +1,8 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Search } from "lucide-react";
+import { PRESS } from "@/components/motion/reveal";
 import { todayLongLabel } from "@/lib/format";
 
 export function MobileHeader({ onOpenPalette }: { onOpenPalette: () => void }) {
@@ -10,14 +12,15 @@ export function MobileHeader({ onOpenPalette }: { onOpenPalette: () => void }) {
         <p className="t-wordmark text-foreground">Mysil</p>
         <p className="t-detail text-muted-foreground">{todayLongLabel()} · Oslo · London · SF</p>
       </div>
-      <button
+      <motion.button
         type="button"
         onClick={onOpenPalette}
         aria-label="Search"
+        {...PRESS}
         className="rounded-sm p-2 text-muted-foreground focus-ring"
       >
         <Search className="size-4" aria-hidden="true" />
-      </button>
+      </motion.button>
     </header>
   );
 }

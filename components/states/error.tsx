@@ -13,7 +13,7 @@ export function ErrorState() {
         <p className="t-eyebrow text-breaking">error</p>
         <p className="t-body">Could not load today&rsquo;s ledger</p>
         <p className="t-detail text-muted-foreground">
-          The firm data source didn&rsquo;t respond — nothing shown here is current
+          The firm data source didn&rsquo;t respond. Nothing shown here is current
         </p>
         <Button variant="outline" className="mt-3 w-fit" onClick={() => window.location.reload()}>
           Retry

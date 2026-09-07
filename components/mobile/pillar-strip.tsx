@@ -1,4 +1,9 @@
+"use client";
+
+import { motion } from "motion/react";
 import { StatusBadge } from "@/components/ledger/status-badge";
+import { AnimatedNumber } from "@/components/motion/number";
+import { StaggerGroup, staggerItem } from "@/components/motion/reveal";
 import { healthPillar, workloadPillar, financialPillar, type PillarResult } from "@/lib/derive/pillars";
 import { PILLAR_RULES, type PillarKey } from "@/lib/derive/thresholds";
 import type { EffectiveFixture } from "@/lib/derive/apply-overlay";
@@ -23,23 +28,28 @@ export function MobilePillarStrip({ fx }: { fx: EffectiveFixture }) {
   };
 
   return (
-    <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+    <StaggerGroup className="grid grid-cols-3 divide-x divide-border border-b border-border">
       {PILLAR_KEYS.map((key) => {
         const result = results[key];
+        const count = Number(result.headline);
         return (
-          <a
+          <motion.a
             key={key}
             href={PILLAR_HREF[key]}
+            variants={staggerItem}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.4 }}
             className="flex flex-col items-start gap-2 px-4 py-6 transition-wash hover:bg-accent focus-ring"
           >
             <StatusBadge variant={result.state} />
-            <p className={cn("t-figure-sm", result.state === "breaking" ? "text-breaking" : "text-foreground")}>
-              {result.headline} <span className="t-detail text-muted-foreground">{PILLAR_RULES[key].unit}</span>
+            <p className={cn("t-figure-sm tabular-nums", result.state === "breaking" ? "text-breaking" : "text-foreground")}>
+              {Number.isFinite(count) ? <AnimatedNumber value={count} /> : result.headline}{" "}
+              <span className="t-detail text-muted-foreground">{PILLAR_RULES[key].unit}</span>
             </p>
             <p className="t-detail text-muted-foreground">{PILLAR_RULES[key].label}</p>
-          </a>
+          </motion.a>
         );
       })}
-    </div>
+    </StaggerGroup>
   );
 }

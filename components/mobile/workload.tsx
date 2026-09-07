@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { StaggerList, StaggerRow } from "@/components/motion/reveal";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -43,7 +45,7 @@ function UnassignedRow({
     (act.kind === "escalate" && m.escalated);
 
   return (
-    <li className="group/row flex items-center justify-between gap-4 rounded-sm -mx-2 px-2 py-4 transition-wash hover:bg-accent">
+    <StaggerRow className="group/row flex items-center justify-between gap-4 rounded-sm -mx-2 px-2 py-4 transition-wash hover:bg-accent">
       <div>
         <p className="t-detail text-ink-2">
           {unassignedRowLabel(m)}
@@ -51,7 +53,7 @@ function UnassignedRow({
             <span className="text-muted-foreground"> · suggested {act.suggestion.lawyer.name}</span>
           )}
         </p>
-        <p className="t-detail">
+        <p className="t-detail mt-1.5">
           {m.name} <span className="text-muted-foreground">· {m.client}</span>
         </p>
       </div>
@@ -81,7 +83,7 @@ function UnassignedRow({
           </Button>
         )}
       </div>
-    </li>
+    </StaggerRow>
   );
 }
 
@@ -95,11 +97,13 @@ function UnassignedList({
   dispatch: (action: LedgerAction) => void;
 }) {
   return (
-    <ul className="mt-5 flex flex-col divide-y divide-border">
-      {items.map((m) => (
-        <UnassignedRow key={m.id} m={m} room={room} dispatch={dispatch} />
-      ))}
-    </ul>
+    <StaggerList className="mt-5 flex flex-col divide-y divide-border">
+      <AnimatePresence initial={false}>
+        {items.map((m) => (
+          <UnassignedRow key={m.id} m={m} room={room} dispatch={dispatch} />
+        ))}
+      </AnimatePresence>
+    </StaggerList>
   );
 }
 
@@ -165,9 +169,9 @@ export function MobileWorkload({
       {bench.length > 0 && (
         <>
         <CapacityLegend className="mt-6" />
-        <ul className="mt-2 flex flex-col divide-y divide-border">
+        <StaggerList className="mt-2 flex flex-col divide-y divide-border">
           {bench.map((row) => (
-            <li key={row.lawyer.id} className="group/row py-4">
+            <StaggerRow key={row.lawyer.id} className="group/row py-4">
               <Collapsible>
                 <DisclosureRow>
                   <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -186,17 +190,17 @@ export function MobileWorkload({
                   </CollapsiblePanel>
                 )}
               </Collapsible>
-            </li>
+            </StaggerRow>
           ))}
-        </ul>
+        </StaggerList>
         </>
       )}
 
       {unassigned.length > 0 && (
         <div className="mt-8 border-t border-border pt-6">
-          <p className="t-subhead">Unassigned</p>
+          <p className="t-subhead">Awaiting action</p>
           <p className="t-detail mt-2 text-ink-2">
-            {unassigned.length} unplaced — {unassignedSplit.ready} ready to assign,{" "}
+            {unassigned.length} unplaced: {unassignedSplit.ready} ready to assign,{" "}
             {unassignedSplit.blocked} blocked.
           </p>
           <UnassignedList

@@ -11,6 +11,7 @@ import { Financial } from "@/components/desktop/financial";
 import { CommandPalette, useCommandPaletteState } from "@/components/desktop/command-palette";
 import { MobileShell } from "@/components/mobile/mobile-shell";
 import { Reveal } from "@/components/motion/reveal";
+import { BackToTop, ScrollProgress } from "@/components/motion/scroll";
 import { applyOverlay } from "@/lib/derive/apply-overlay";
 import { useLedgerState } from "@/lib/state/ledger-store";
 import type { LedgerAction } from "@/lib/state/types";
@@ -110,10 +111,10 @@ export function Dashboard({ fixture }: { fixture: Fixture }) {
 
   return (
     <>
+      <ScrollProgress />
       <div className="hidden md:block">
+        <Header onOpenPalette={() => setPaletteOpen(true)} />
         <main className="mx-auto max-w-[1200px] px-6 pb-32">
-          <Header onOpenPalette={() => setPaletteOpen(true)} />
-
           <Reveal order={0}>
             <PillarStrip fx={fx} />
           </Reveal>
@@ -142,6 +143,7 @@ export function Dashboard({ fixture }: { fixture: Fixture }) {
       </div>
 
       <CommandPalette fx={fx} open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <BackToTop />
     </>
   );
 }

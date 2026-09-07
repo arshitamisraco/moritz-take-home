@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { AnimatedNumber } from "@/components/motion/number";
+import { EASE, StaggerGroup, StaggerList, StaggerRow, staggerItem } from "@/components/motion/reveal";
 import {
   Collapsible,
   CollapsiblePanel,
@@ -45,7 +48,7 @@ function comparisonLine(total: number, changePct: number): string {
 
 function ActivityRow({ event }: { event: ActivityEvent }) {
   return (
-    <li className="flex items-baseline justify-between gap-4 py-2.5">
+    <StaggerRow className="flex items-baseline justify-between gap-4 py-2.5">
       <span className="t-detail w-12 shrink-0 tabular-nums text-muted-foreground">
         {event.offsetMs >= 0 ? "now" : clockTime(event.offsetMs)}
       </span>
@@ -53,7 +56,7 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
         {KIND_LABEL[event.kind] ?? event.kind}
       </span>
       <span className="t-detail flex-1 truncate text-right">{event.detail}</span>
-    </li>
+    </StaggerRow>
   );
 }
 
@@ -76,36 +79,49 @@ export function Pulse({ events }: { events: ActivityEvent[] }) {
           {comparisonLine(pulse.total, pulse.changePct)}
         </p>
 
-        <div className="mt-4 grid grid-cols-4 gap-4">
+        <StaggerGroup className="mt-4 grid grid-cols-4 gap-4">
           {PULSE_KINDS.map((kind) => (
-            <div key={kind} className="flex flex-col gap-1">
-              <p className="t-figure-sm">{pulse.byKind[kind]}</p>
+            <motion.div key={kind} variants={staggerItem} className="flex flex-col gap-1">
+              <p className="t-figure-sm tabular-nums">
+                <AnimatedNumber value={pulse.byKind[kind]} />
+              </p>
               <p className="t-eyebrow text-muted-foreground">{PULSE_KIND_LABEL[kind]}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </StaggerGroup>
 
         <p className="t-subhead mt-8">Latest activity</p>
 
         <div className="mt-3 flex flex-col divide-y divide-border">
+          <AnimatePresence initial={false}>
           {visible.map((group, i) => (
-            <Collapsible key={group.offsetMs} defaultOpen={i === 0} className="py-1">
+            <motion.div
+              key={group.offsetMs}
+              initial={i < INITIAL_DAYS ? false : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              className="overflow-hidden"
+            >
+            <Collapsible defaultOpen={i === 0} className="py-1">
               <DisclosureRow>
                 <span className="t-body">{pastDayLabel(group.offsetMs)}</span>
               </DisclosureRow>
               <CollapsiblePanel>
                 {group.events.length > 0 ? (
-                  <ul className="flex flex-col divide-y divide-rule-quiet pb-1 pl-3">
+                  <StaggerList className="flex flex-col divide-y divide-rule-quiet pb-1 pl-3">
                     {group.events.map((e) => (
                       <ActivityRow key={e.id} event={e} />
                     ))}
-                  </ul>
+                  </StaggerList>
                 ) : (
                   <p className="t-detail pb-2 pl-3 text-muted-foreground">No activity</p>
                 )}
               </CollapsiblePanel>
             </Collapsible>
+            </motion.div>
           ))}
+          </AnimatePresence>
         </div>
 
         {shownDays < groups.length && (

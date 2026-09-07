@@ -25,15 +25,15 @@ const SECTIONS = [
 function scrollToSection(id: string, mobileId: string | null) {
   const desktopEl = document.getElementById(id);
   if (desktopEl && desktopEl.offsetParent !== null) {
-    desktopEl.scrollIntoView({ block: "start" });
+    desktopEl.scrollIntoView({ block: "start", behavior: "smooth" });
     return;
   }
   const mobileEl = mobileId ? document.getElementById(mobileId) : null;
   if (mobileEl) {
-    mobileEl.scrollIntoView({ block: "start" });
+    mobileEl.scrollIntoView({ block: "start", behavior: "smooth" });
     return;
   }
-  desktopEl?.scrollIntoView({ block: "start" });
+  desktopEl?.scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
 export function CommandPalette({

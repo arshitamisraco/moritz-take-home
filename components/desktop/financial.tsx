@@ -2,6 +2,8 @@
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 import { Section } from "@/components/desktop/section";
+import { AnimatedNumber } from "@/components/motion/number";
+import { ScrollReveal, StaggerList } from "@/components/motion/reveal";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -106,10 +108,14 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
       <div className="mt-8 flex items-start justify-between gap-4">
         <div>
           <p className="t-eyebrow text-muted-foreground">Revenue</p>
-          <p className="t-figure mt-1 tabular-nums">
-            {latest ? formatUsdCompact(latest.amountUsd) : "—"}
+          <p className="t-figure mt-2 tabular-nums">
+            {latest ? (
+              <AnimatedNumber value={latest.amountUsd} format={formatUsdCompact} />
+            ) : (
+              "—"
+            )}
           </p>
-          <p className="t-detail mt-1 tabular-nums text-muted-foreground">
+          <p className="t-detail mt-2 tabular-nums text-muted-foreground">
             {changePct !== null && (
               <>
                 <span className={changePct < 0 ? "text-breaking" : undefined}>
@@ -127,7 +133,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
 
       {/* Band 2 — the two "why" reads */}
       <div className="mt-8 grid grid-cols-2 gap-12 border-t border-border pt-8">
-        <div>
+        <ScrollReveal>
           <p className="t-subhead">Revenue vs target</p>
           <ChartContainer config={revenueConfig} className="mt-4 h-52 w-full">
             <AreaChart data={fx.revenueByMonth} margin={{ left: 4, right: 96, top: 12, bottom: 0 }}>
@@ -178,9 +184,9 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
               />
             </AreaChart>
           </ChartContainer>
-        </div>
+        </ScrollReveal>
 
-        <div>
+        <ScrollReveal delay={0.08}>
           <p className="t-subhead">Where delivery costs most</p>
           <ChartContainer config={marginByTypeConfig} className="mt-4 h-52 w-full">
             <BarChart data={byType} layout="vertical" margin={{ left: 0, right: 12 }}>
@@ -216,7 +222,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
               {lowest.label} run {lowest.belowFloorPts > 0 ? `${lowest.belowFloorPts}pt below` : `${Math.abs(lowest.belowFloorPts)}pt above`} the {MARGIN_FLOOR_PCT}% floor, the thinnest of any type.
             </p>
           )}
-        </div>
+        </ScrollReveal>
       </div>
 
       {/* Band 3 — the leak, demoted */}
@@ -236,22 +242,22 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
               {ranked[0].client} is {leakConcentrationPct(fx)}% of it
             </p>
 
-            <ul className="mt-4 flex flex-col divide-y divide-border">
+            <StaggerList className="mt-4 flex flex-col divide-y divide-border">
               {preview.map((m) => (
                 <LeakRow key={m.id} m={m} />
               ))}
-            </ul>
+            </StaggerList>
             {rest.length > 0 && (
               <Collapsible className="mt-3">
                 <CollapsibleTrigger className="t-detail w-fit cursor-pointer rounded-sm text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground focus-ring">
                   +{rest.length} more below the {MARGIN_FLOOR_PCT}% floor
                 </CollapsibleTrigger>
                 <CollapsiblePanel>
-                  <ul className="mt-1 flex flex-col divide-y divide-border">
+                  <StaggerList className="mt-1 flex flex-col divide-y divide-border">
                     {rest.map((m) => (
                       <LeakRow key={m.id} m={m} />
                     ))}
-                  </ul>
+                  </StaggerList>
                 </CollapsiblePanel>
               </Collapsible>
             )}

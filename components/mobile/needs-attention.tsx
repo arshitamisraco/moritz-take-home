@@ -61,7 +61,7 @@ export function MobileNeedsAttention({
             {nextDue && (
               <>
                 {" "}
-                Next due — {nextDue.name} · {nextDue.client},{" "}
+                Next due: {nextDue.name} · {nextDue.client},{" "}
                 {dayLabel(nextDue.deadlineOffsetMs as number)}{" "}
                 {clockTime(nextDue.deadlineOffsetMs as number)}.
               </>

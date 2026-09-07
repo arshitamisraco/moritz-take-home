@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { StaggerRow } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 /**
@@ -24,11 +27,11 @@ export function MatterRow({
   className?: string;
 }) {
   return (
-    <li className={cn("flex items-center justify-between gap-4 py-3", className)}>
+    <StaggerRow className={cn("flex items-center justify-between gap-4 py-3", className)}>
       <p className="min-w-0 truncate">
         {name} <span className="text-muted-foreground">· {client}</span>
       </p>
       <span className="shrink-0 tabular-nums">{right}</span>
-    </li>
+    </StaggerRow>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { StaggerList, StaggerRow } from "@/components/motion/reveal";
 import { ReassignMenu } from "@/components/ledger/reassign-menu";
 import { DoneMarker } from "@/components/ledger/row-actions";
 import { LoadRatio } from "@/components/ledger/load-ratio";
@@ -65,7 +67,8 @@ export function MobileAttentionList({
   }));
 
   return (
-    <ul className="flex flex-col">
+    <StaggerList className="flex flex-col">
+      <AnimatePresence initial={false}>
       {withHeaders.map(({ row, showHeader, lastInGroup }) => {
         const m = row.matter;
         const { primary, primaryDone, overflow } = matterAction(row, candidates);
@@ -84,7 +87,7 @@ export function MobileAttentionList({
         const overPromise = clockPct !== null && clockPct > 100;
 
         return (
-          <li key={m.id}>
+          <StaggerRow key={m.id}>
             {showHeader && (
               <p className="t-subhead border-b border-rule-quiet px-4 pt-5 pb-3 text-muted-foreground">
                 {BUCKET_LABEL[row.bucket]} · {bucketCounts[row.bucket]}
@@ -183,9 +186,10 @@ export function MobileAttentionList({
                 )}
               </div>
             </div>
-          </li>
+          </StaggerRow>
         );
       })}
-    </ul>
+      </AnimatePresence>
+    </StaggerList>
   );
 }

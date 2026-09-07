@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
 import { StatusBadge } from "@/components/ledger/status-badge";
+import { AnimatedNumber } from "@/components/motion/number";
+import { LIFT, StaggerGroup, staggerItem } from "@/components/motion/reveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { healthPillar, workloadPillar, financialPillar, type PillarResult } from "@/lib/derive/pillars";
@@ -19,10 +22,14 @@ const PILLAR_STATES: PillarState[] = ["steady", "straining", "breaking"];
 function PillarCard({ pillarKey, result }: { pillarKey: PillarKey; result: PillarResult }) {
   const rules = PILLAR_RULES[pillarKey];
 
+  const count = Number(result.headline);
+
   return (
-    <a
+    <motion.a
       href={PILLAR_HREF[pillarKey]}
       className="block rounded-lg transition-wash hover:bg-accent focus-ring"
+      variants={staggerItem}
+      {...LIFT}
     >
       <Card className="gap-3">
         {/* Below lg the badge sits under the title on every card — one
@@ -49,14 +56,15 @@ function PillarCard({ pillarKey, result }: { pillarKey: PillarKey; result: Pilla
         </CardHeader>
 
         <CardContent className="flex flex-col gap-1">
-          <p className={cn("t-figure-sm", result.state === "breaking" ? "text-breaking" : "text-foreground")}>
-            {result.headline} <span className="t-detail text-muted-foreground">{rules.unit}</span>
+          <p className={cn("t-figure-sm tabular-nums", result.state === "breaking" ? "text-breaking" : "text-foreground")}>
+            {Number.isFinite(count) ? <AnimatedNumber value={count} /> : result.headline}{" "}
+            <span className="t-detail text-muted-foreground">{rules.unit}</span>
           </p>
           <p className="t-detail text-ink-2">{result.evidence}</p>
           <p className="t-detail text-muted-foreground">{result.baseline}</p>
         </CardContent>
       </Card>
-    </a>
+    </motion.a>
   );
 }
 
@@ -75,11 +83,11 @@ export function PillarStrip({ fx }: { fx: EffectiveFixture }) {
   return (
     <nav aria-label="Firm at a glance" className="mt-8">
       <p className="t-detail text-muted-foreground">Firm at a glance</p>
-      <div className="mt-3 grid grid-cols-3 gap-4">
+      <StaggerGroup className="mt-3 grid grid-cols-3 gap-4">
         {PILLAR_KEYS.map((key) => (
           <PillarCard key={key} pillarKey={key} result={results[key]} />
         ))}
-      </div>
+      </StaggerGroup>
     </nav>
   );
 }

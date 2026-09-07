@@ -24,7 +24,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mysil — operations",
+  title: "Mysil: operations",
   description: "Firm health, workload and financial performance, one ledger.",
 };
 

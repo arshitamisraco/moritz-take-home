@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/desktop/section";
+import { StaggerList, StaggerRow } from "@/components/motion/reveal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,9 +62,9 @@ function Bench({
   dispatch: (action: LedgerAction) => void;
 }) {
   return (
-    <ul className="mt-3 flex flex-col divide-y divide-border">
+    <StaggerList className="mt-3 flex flex-col divide-y divide-border">
       {rows.map((row) => (
-        <li key={row.lawyer.id} className="group/row py-3">
+        <StaggerRow key={row.lawyer.id} className="group/row py-3">
           <Collapsible>
             <DisclosureRow>
               <span className="t-body w-36 shrink-0 truncate">{row.lawyer.name}</span>
@@ -83,9 +85,9 @@ function Bench({
               </CollapsiblePanel>
             )}
           </Collapsible>
-        </li>
+        </StaggerRow>
       ))}
-    </ul>
+    </StaggerList>
   );
 }
 
@@ -104,7 +106,7 @@ function UnassignedRow({
     (act.kind === "escalate" && m.escalated);
 
   return (
-    <li className="group/row flex min-h-16 items-center justify-between gap-6 rounded-sm -mx-2 px-2 py-4 transition-wash hover:bg-accent">
+    <StaggerRow className="group/row flex min-h-16 items-center justify-between gap-6 rounded-sm -mx-2 px-2 py-4 transition-wash hover:bg-accent">
       <div>
         <p className="t-detail text-ink-2">
           {unassignedRowLabel(m)}
@@ -112,7 +114,7 @@ function UnassignedRow({
             <span className="text-muted-foreground"> · suggested {act.suggestion.lawyer.name}</span>
           )}
         </p>
-        <p className="t-body">
+        <p className="t-body mt-1.5">
           {m.name} <span className="text-muted-foreground">· {m.client}</span>
         </p>
       </div>
@@ -142,7 +144,7 @@ function UnassignedRow({
           </Button>
         )}
       </div>
-    </li>
+    </StaggerRow>
   );
 }
 
@@ -156,11 +158,13 @@ function UnassignedList({
   dispatch: (action: LedgerAction) => void;
 }) {
   return (
-    <ul className="mt-6 flex flex-col divide-y divide-border">
-      {items.map((m) => (
-        <UnassignedRow key={m.id} m={m} room={room} dispatch={dispatch} />
-      ))}
-    </ul>
+    <StaggerList className="mt-6 flex flex-col divide-y divide-border">
+      <AnimatePresence initial={false}>
+        {items.map((m) => (
+          <UnassignedRow key={m.id} m={m} room={room} dispatch={dispatch} />
+        ))}
+      </AnimatePresence>
+    </StaggerList>
   );
 }
 
@@ -265,9 +269,9 @@ export function Workload({
 
         {unassigned.length > 0 && (
           <div className="mt-12 border-t border-border pt-8">
-            <p className="t-subhead">Unassigned</p>
+            <p className="t-subhead">Awaiting action</p>
             <p className="t-detail mt-2 text-ink-2">
-              {unassigned.length} unplaced — {unassignedSplit.ready} ready to assign,{" "}
+              {unassigned.length} unplaced: {unassignedSplit.ready} ready to assign,{" "}
               {unassignedSplit.blocked} blocked.
             </p>
             <UnassignedList

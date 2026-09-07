@@ -67,11 +67,11 @@ export function NeedsAttention({
 
       {quiet ? (
         <p className="t-body">
-          Nothing needs you right now — every matter is inside its promised window.
+          Nothing needs you right now. Every matter is inside its promised window.
           {nextDue && (
             <span className="text-muted-foreground">
               {" "}
-              Next due — {nextDue.name} · {nextDue.client},{" "}
+              Next due: {nextDue.name} · {nextDue.client},{" "}
               {dayLabel(nextDue.deadlineOffsetMs as number)}{" "}
               {clockTime(nextDue.deadlineOffsetMs as number)}.
             </span>

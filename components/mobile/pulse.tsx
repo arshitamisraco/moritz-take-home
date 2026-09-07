@@ -1,6 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { AnimatedNumber } from "@/components/motion/number";
+import { EASE, PRESS, StaggerGroup, StaggerList, StaggerRow, staggerItem } from "@/components/motion/reveal";
 import { clockTime, pastDayLabel } from "@/lib/format";
 import { groupByDay, pulseWindow, PULSE_KINDS, type PulseKind } from "@/lib/derive/pulse";
 import type { ActivityEvent } from "@/lib/fixture/types";
@@ -68,25 +71,34 @@ export function MobilePulse({ events }: { events: ActivityEvent[] }) {
 
       <p className="t-detail mt-4 text-muted-foreground">{comparison}</p>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <StaggerGroup className="mt-4 grid grid-cols-2 gap-4">
         {PULSE_KINDS.map((kind) => (
-          <div key={kind} className="flex flex-col gap-1">
-            <p className="t-figure-sm">{pulse.byKind[kind]}</p>
+          <motion.div key={kind} variants={staggerItem} className="flex flex-col gap-1">
+            <p className="t-figure-sm tabular-nums">
+              <AnimatedNumber value={pulse.byKind[kind]} />
+            </p>
             <p className="t-eyebrow text-muted-foreground">{PULSE_KIND_LABEL[kind]}</p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </StaggerGroup>
 
       {blocks.length === 0 ? (
         <p className="t-detail mt-4 text-muted-foreground">No activity</p>
       ) : (
         <div className="mt-4 flex flex-col gap-6">
+          <AnimatePresence initial={false}>
           {blocks.map((block) => (
-            <div key={block.offsetMs}>
+            <motion.div
+              key={block.offsetMs}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28, ease: EASE }}
+            >
               <p className="t-body">{pastDayLabel(block.offsetMs)}</p>
-              <ul className="mt-2 flex flex-col divide-y divide-rule-quiet pl-3">
+              <StaggerList className="mt-2 flex flex-col divide-y divide-rule-quiet pl-3">
                 {block.events.map((e) => (
-                  <li key={e.id} className="flex items-baseline gap-3 py-2.5">
+                  <StaggerRow key={e.id} className="flex items-baseline gap-3 py-2.5">
                     <span className="t-detail w-11 shrink-0 tabular-nums text-muted-foreground">
                       {e.offsetMs >= 0 ? "now" : clockTime(e.offsetMs)}
                     </span>
@@ -94,22 +106,24 @@ export function MobilePulse({ events }: { events: ActivityEvent[] }) {
                     <span className="t-eyebrow shrink-0 text-muted-foreground">
                       {KIND_LABEL[e.kind] ?? e.kind}
                     </span>
-                  </li>
+                  </StaggerRow>
                 ))}
-              </ul>
-            </div>
+              </StaggerList>
+            </motion.div>
           ))}
+          </AnimatePresence>
         </div>
       )}
 
       {rows < total && (
-        <button
+        <motion.button
           type="button"
           onClick={() => setRows((n) => n + INITIAL_ROWS)}
-          className="t-detail mt-4 text-ink-2 underline decoration-1 underline-offset-[0.15em] focus-ring rounded-sm"
+          {...PRESS}
+          className="t-detail mt-4 inline-block text-ink-2 underline decoration-1 underline-offset-[0.15em] focus-ring rounded-sm"
         >
           Load older
-        </button>
+        </motion.button>
       )}
     </section>
   );

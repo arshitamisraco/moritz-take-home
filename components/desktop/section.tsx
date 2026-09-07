@@ -1,4 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { EASE } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 /**
@@ -33,11 +37,16 @@ export function Section({
   first?: boolean;
 }) {
   const Heading = as;
+  const reduce = useReducedMotion();
   return (
-    <section
+    <motion.section
       id={id}
       aria-label={title}
       className={cn(first ? "mt-10" : "mt-16 border-t border-border pt-10", className)}
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px 0px -80px 0px" }}
+      transition={{ duration: 0.5, ease: EASE }}
     >
       <div className="flex items-baseline justify-between gap-6">
         <Heading className="t-section">{title}</Heading>
@@ -46,6 +55,6 @@ export function Section({
         )}
       </div>
       <div className="mt-6">{children}</div>
-    </section>
+    </motion.section>
   );
 }

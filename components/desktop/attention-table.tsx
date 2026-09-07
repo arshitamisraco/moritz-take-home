@@ -1,13 +1,14 @@
 "use client";
 
 import { Fragment } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { EASE } from "@/components/motion/reveal";
 import {
   Table,
   TableBody,
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import { LoadRatio } from "@/components/ledger/load-ratio";
 import { RowActions } from "@/components/ledger/row-actions";
 import { attentionDetail } from "@/lib/derive/detail";
 import { promiseClockPct } from "@/lib/derive/matters";
@@ -40,6 +41,11 @@ function lawyerName(fx: EffectiveFixture, id: string | null) {
  */
 const ROW_INDENT = "pl-4";
 
+/** A <tr> can't be transformed without breaking the table's own layout, so
+ * a row that arrives or clears fades and slides its cell contents rather
+ * than the row box. */
+const MotionTableRow = motion.create(TableRow);
+
 function AttentionRow({
   row,
   fx,
@@ -62,8 +68,13 @@ function AttentionRow({
     : "relative after:pointer-events-none after:absolute after:bottom-0 after:left-4 after:right-0 after:h-px after:bg-rule-quiet";
 
   return (
-    <TableRow
+    <MotionTableRow
       data-halted={row.matter.halted || undefined}
+      layout="position"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.24, ease: EASE }}
       className={cn(
         "group/row border-0 transition-wash",
         row.bucket === "compliance" ? "hover:bg-surface-active" : "hover:bg-accent"
@@ -87,10 +98,7 @@ function AttentionRow({
 
       <TableCell className={cn("w-[16%] py-5 align-top", rule)}>
         {lawyer ? (
-          <div className="flex items-baseline gap-1.5">
-            <span className="t-body">{lawyer.name}</span>
-            <LoadRatio committed={lawyer.committedMatters} declared={lawyer.declaredAvailability} />
-          </div>
+          <span className="t-body">{lawyer.name}</span>
         ) : (
           <span className="t-detail text-muted-foreground">unassigned</span>
         )}
@@ -108,7 +116,7 @@ function AttentionRow({
           className="flex-nowrap justify-end"
         />
       </TableCell>
-    </TableRow>
+    </MotionTableRow>
   );
 }
 
@@ -151,6 +159,7 @@ export function AttentionTable({
     <div className="overflow-x-auto">
       <Table>
         <TableBody>
+          <AnimatePresence initial={false}>
           {withHeaders.map(({ row, showHeader, firstGroup, lastInGroup }) => (
             <Fragment key={row.matter.id}>
               {showHeader && (
@@ -177,6 +186,7 @@ export function AttentionTable({
               />
             </Fragment>
           ))}
+          </AnimatePresence>
         </TableBody>
       </Table>
     </div>

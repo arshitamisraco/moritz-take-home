@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { motion } from "motion/react";
 import type { DeadlinePressure } from "@/lib/derive/bench-load";
 import { cn } from "@/lib/utils";
 
@@ -68,9 +71,19 @@ export function CapacityMeter({
   const total = segments.length + empties;
   const mark = Math.min(Math.max(declared, 0), total);
 
+  // Committed segments grow out of the track left to right, one after the
+  // next, so a lawyer's load is seen accumulating past the hairline rather
+  // than arriving already full.
   const cells: ReactNode[] = [
     ...segments.map((p, i) => (
-      <span key={`s${i}`} className={cn("h-full flex-1", SEGMENT_TOKEN[p])} />
+      <motion.span
+        key={`s${i}`}
+        className={cn("h-full flex-1 origin-left", SEGMENT_TOKEN[p])}
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, margin: "-24px 0px" }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: i * 0.03 }}
+      />
     )),
     ...Array.from({ length: empties }, (_, i) => (
       <span key={`e${i}`} className="h-full flex-1 bg-accent" />

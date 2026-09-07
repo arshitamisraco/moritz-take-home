@@ -1,5 +1,8 @@
+"use client"
+
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
@@ -61,16 +64,29 @@ const buttonVariants = cva(
   }
 )
 
+/** Every button presses. The dip is 3% on pointer-down and springs back,
+ * which is the only transform in the tier — hover stays a flat wash. A
+ * call site that supplies its own `render` (a link, an icon slot) keeps
+ * it and simply doesn't press. */
+const pressElement = (
+  <motion.button
+    whileTap={{ scale: 0.97 }}
+    transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.4 }}
+  />
+)
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      render={render ?? pressElement}
       {...props}
     />
   )

@@ -1,3 +1,7 @@
+"use client";
+
+import { AnimatedNumber } from "@/components/motion/number";
+import { StaggerList } from "@/components/motion/reveal";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -51,13 +55,17 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
         <div>
           <h2 className="t-section">Financial health</h2>
           <p className="t-figure mt-2 tabular-nums">
-            {latest ? formatUsdCompact(latest.amountUsd) : "—"}
+            {latest ? (
+              <AnimatedNumber value={latest.amountUsd} format={formatUsdCompact} />
+            ) : (
+              "—"
+            )}
           </p>
         </div>
         <StatusBadge variant={pillar.state} />
       </div>
 
-      <p className="t-detail mt-1 tabular-nums text-muted-foreground">
+      <p className="t-detail mt-3 tabular-nums text-muted-foreground">
         {changePct !== null && (
           <>
             <span className={changePct < 0 ? "text-breaking" : undefined}>
@@ -118,7 +126,7 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
                   </>
                 )}
               </p>
-              <ul className="mt-4 flex flex-col divide-y divide-border">
+              <StaggerList className="mt-4 flex flex-col divide-y divide-border">
                 {preview.map((m) => (
                   <MatterRow
                     key={m.id}
@@ -142,7 +150,7 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
                     }
                   />
                 ))}
-              </ul>
+              </StaggerList>
               {restCount > 0 && (
                 <p className="t-detail mt-3 text-muted-foreground">
                   +{restCount} more below the {MARGIN_FLOOR_PCT}% floor

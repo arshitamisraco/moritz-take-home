@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { SWAP } from "@/components/motion/reveal";
-import { LoadRatio } from "@/components/ledger/load-ratio";
 import { RowActions } from "@/components/ledger/row-actions";
 import { attentionDetail } from "@/lib/derive/detail";
 import { isHandled, type AtRiskRow } from "@/lib/derive/matters";
@@ -100,13 +99,7 @@ export function AttentionAlert({
               {attentionDetail(row.matter, row.bucket)}
             </AlertDescription>
             {lawyer && (
-              <span className="t-detail text-muted-foreground flex items-baseline gap-1.5">
-                {lawyer.name}
-                <LoadRatio
-                  committed={lawyer.committedMatters}
-                  declared={lawyer.declaredAvailability}
-                />
-              </span>
+              <span className="t-detail text-muted-foreground">{lawyer.name}</span>
             )}
           </div>
 

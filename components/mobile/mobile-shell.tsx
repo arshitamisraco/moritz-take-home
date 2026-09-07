@@ -6,7 +6,7 @@ import { MobileNeedsAttention } from "@/components/mobile/needs-attention";
 import { MobileWorkload } from "@/components/mobile/workload";
 import { MobilePulse } from "@/components/mobile/pulse";
 import { MobileFinancial } from "@/components/mobile/financial";
-import { Reveal } from "@/components/motion/reveal";
+import { Reveal, ScrollReveal } from "@/components/motion/reveal";
 import type { EffectiveFixture } from "@/lib/derive/apply-overlay";
 import type { LedgerAction } from "@/lib/state/types";
 import type { ActivityEvent } from "@/lib/fixture/types";
@@ -31,15 +31,17 @@ export function MobileShell({
       <Reveal order={1}>
         <MobileNeedsAttention fx={fx} dispatch={dispatch} />
       </Reveal>
-      <Reveal order={2}>
+      {/* Below the first screen the entrance is earned by scrolling, not
+          spent on mount. */}
+      <ScrollReveal>
         <MobileWorkload fx={fx} dispatch={dispatch} />
-      </Reveal>
-      <Reveal order={3}>
+      </ScrollReveal>
+      <ScrollReveal>
         <MobilePulse events={activity} />
-      </Reveal>
-      <Reveal order={4}>
+      </ScrollReveal>
+      <ScrollReveal>
         <MobileFinancial fx={fx} />
-      </Reveal>
+      </ScrollReveal>
     </main>
   );
 }
