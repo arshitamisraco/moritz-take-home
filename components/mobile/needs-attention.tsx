@@ -50,7 +50,7 @@ export function MobileNeedsAttention({
               className="flex flex-col items-start gap-2 px-4 py-6 text-left focus-ring-inset"
             >
               <StatusBadge variant={s.state} />
-              <p className={cn("t-figure text-[28px]", s.state === "breaking" ? "text-breaking" : "text-foreground")}>
+              <p className={cn("t-figure-sm", s.state === "breaking" ? "text-breaking" : "text-foreground")}>
                 {s.count}
               </p>
               <p className="t-detail text-muted-foreground">{s.label}</p>

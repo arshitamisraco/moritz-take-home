@@ -12,7 +12,7 @@ export function Header({
 }) {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background py-4">
-      <p className="px-2 py-3 font-serif text-2xl font-bold tracking-tight text-foreground">Mysil</p>
+      <p className="px-2 py-3 t-wordmark text-foreground">Mysil</p>
 
       <nav className="flex items-center gap-2 px-2 py-3">
         <Button

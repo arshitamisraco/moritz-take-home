@@ -42,6 +42,9 @@
      surfaces only, never text. */
   --n-100: #f2efe9; /* wash — hover fill, muted surfaces, track grounds */
   --n-200: #e9e4db; /* wash, one step down — pressed / active */
+  --n-300: #d8d1c4; /* faint hairline — nested / row-level dividers only. Sits
+                       below the 3:1 mark rule on purpose: it keeps list
+                       rhythm, it is not meant to read as a hard line. Never text. */
   --n-400: #b7b0a2; /* faint marks, disabled ink, borders / dividers / inputs */
   --n-500: #78716a; /* quiet ink — denominators, captions · 4.6:1 on paper */
   --n-600: #6b6459; /* second ink — detail lines · 5.6:1 on paper */
@@ -92,6 +95,10 @@
   /* structural edge — borders, inputs, dividers: a faint hairline. */
   --border: var(--n-400);
   --input: var(--n-400);
+  /* one step lighter than --border: the divider for rows nested inside a
+     group whose own edge already rides on --border, so the eye ranks the
+     group boundary above the rows within it. */
+  --rule-quiet: var(--n-300);
   /* focus ring is near-black — one crisp halo, no colour. */
   --ring: var(--n-900);
 
@@ -165,6 +172,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-rule-quiet: var(--rule-quiet);
   --color-ring: var(--ring);
 
   --color-chart-1: var(--chart-1);
@@ -210,43 +218,105 @@
 }
 
 /* ---------------------------------------------------------------------- *
- * Type scale — five steps, base unit 4px.
+ * Type scale — eight roles, three faces, one utility per job.
+ *
+ * The rule that keeps this small: a role is a JOB, not a size. Nothing in
+ * the component tree may set font-size, font-family, font-weight or
+ * letter-spacing — not as a Tailwind utility, not as an override on one of
+ * these classes. If something needs a size that isn't here, it needs a
+ * role that isn't here, and it gets added below rather than inline.
+ *
+ * The faces carry meaning and never trade places:
+ *   serif (Newsreader) — human names and prose: matters, clients, lawyers,
+ *     section headings, sentences the reader is meant to read.
+ *   sans (Plex Sans)   — explanatory text. The workhorse.
+ *   mono (Plex Mono)   — quantities and machine-ish tags: figures, status
+ *     badges, event kinds, chart axes.
  * ---------------------------------------------------------------------- */
 
 @layer utilities {
-  /* .t-eyebrow-plain is the same mono label minus the uppercase — for
-     eyebrow-style text inside something clickable, where the casing rule
-     forbids caps. */
-  .t-eyebrow,
-  .t-eyebrow-plain {
+  /* .t-wordmark — the Mysil brand mark, and nothing else. Legitimately
+     off-scale; declared here so the desktop and mobile headers agree
+     instead of each restating a size and a weight. Steps down below the
+     md breakpoint, where <MobileHeader> takes over. */
+  .t-wordmark {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  @media (width >= 48rem) {
+    .t-wordmark {
+      font-size: 24px;
+    }
+  }
+
+  /* .t-eyebrow — mono, caps, tracked out. ONE job: a categorical machine
+     tag. Status badges, activity kinds, compliance flags, chart axes.
+     It is not a heading and it does not label a group — anything sitting
+     above a group or a figure is .t-subhead. Keeping this to one job is
+     the difference between an accent and a texture. */
+  .t-eyebrow {
     font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.25;
+    font-weight: 500;
     letter-spacing: 0.08em;
-  }
-  .t-eyebrow {
     text-transform: uppercase;
   }
+
+  /* .t-detail — the workhorse. Every explanatory line, denominator,
+     caption and secondary clause on the page. */
   .t-detail {
     font-family: var(--font-sans);
     font-size: 13px;
     line-height: 1.45;
   }
+
+  /* .t-body — names and prose. Matter, client and lawyer names wherever
+     they appear, including inside menus, so a name is the same size in a
+     table row and in the dropdown that reassigns it. */
   .t-body {
     font-family: var(--font-serif);
     font-size: 15px;
     line-height: 1.25;
   }
+
+  /* .t-subhead — the body face at medium weight. ONE job: the label above
+     a group or a figure. Stat-tile labels, list group headers, menu
+     section labels, chart captions. Distinct from .t-body by weight
+     alone, so the editorial voice holds and the page doesn't sprout a
+     second heading family. */
+  .t-subhead {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  /* .t-section — the only heading. One per top-level block. */
   .t-section {
     font-family: var(--font-serif);
     font-size: 20px;
     line-height: 1.2;
   }
-  .t-figure {
+
+  /* .t-figure / .t-figure-sm — the quantity. Full size for the one hero
+     number in a block; -sm for figures repeating across a grid, where 44px
+     would shout three or five times over. Two steps, not the three that
+     inline overrides had grown to. */
+  .t-figure,
+  .t-figure-sm {
     font-family: var(--font-mono);
-    font-size: 44px;
     line-height: 1;
     letter-spacing: -0.02em;
+  }
+  .t-figure {
+    font-size: 44px;
+  }
+  .t-figure-sm {
+    font-size: 28px;
   }
 }
 

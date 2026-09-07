@@ -100,25 +100,7 @@ export type MarginByType = Record<MatterType, number>;
 export interface RevenueMonth {
   label: string;
   amountUsd: number;
-}
-
-/**
- * Firm pulse — a same-day operational tally, deliberately separate from
- * the activity log. The log is a handful of the most recent events; the
- * pulse is the day's real total, the number an admin actually wants at a
- * glance ("is the firm busy today"), so it's carried as its own fact
- * rather than derived by counting a truncated feed.
- */
-export interface TodayPulse {
-  filings: number;
-  meetings: number;
-  newMatters: number;
-  onboardings: number;
-}
-
-export interface PulseDay {
-  label: string;
-  count: number;
+  marginPct: number;
 }
 
 export interface Fixture {
@@ -133,8 +115,4 @@ export interface Fixture {
   quotedMarginPct: number;
   marginTargetPct: number;
   onTimeTargetPct: number;
-  todayPulse: TodayPulse;
-  /** Total firm activity (filings + meetings + matters + onboardings) for
-   * the 5 preceding business days, oldest first — the homepage sparkline. */
-  weeklyPulse: PulseDay[];
 }

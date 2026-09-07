@@ -42,7 +42,7 @@ export function isInFinalWindow(m: EffectiveMatter): boolean {
   );
 }
 
-function bucketFor(m: EffectiveMatter): TimeBucket | null {
+export function bucketFor(m: EffectiveMatter): TimeBucket | null {
   if (isComplianceBreach(m)) return "compliance";
   if (!m.atRisk) return null;
   if (m.status !== "open" || m.deadlineOffsetMs === null) return null;

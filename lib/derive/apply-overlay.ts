@@ -40,8 +40,23 @@ export function applyOverlay(fixture: Fixture, ledger: LedgerState): EffectiveFi
     };
   });
 
+  // Live load — a reassignment moves one committed matter off its origin
+  // lawyer and onto the target. Without folding that back into
+  // committedMatters the capacity meters, the headroom pool and every
+  // LoadRatio stay frozen at their fixture values while the rest of the
+  // page reacts to the move. Placing a previously unassigned matter (no
+  // origin) consumes headroom with no decrement.
+  const loadDelta = new Map<string, number>();
+  for (const m of fixture.matters) {
+    const to = ledger.matterOverlays[m.id]?.reassignedToLawyerId;
+    if (!to || to === m.lawyerId) continue;
+    if (m.lawyerId) loadDelta.set(m.lawyerId, (loadDelta.get(m.lawyerId) ?? 0) - 1);
+    loadDelta.set(to, (loadDelta.get(to) ?? 0) + 1);
+  }
+
   const lawyers: EffectiveLawyer[] = fixture.lawyers.map((l) => ({
     ...l,
+    committedMatters: Math.max(0, l.committedMatters + (loadDelta.get(l.id) ?? 0)),
     availabilityRequested: ledger.availabilityRequested.has(l.id),
   }));
 

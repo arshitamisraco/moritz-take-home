@@ -62,8 +62,8 @@ export function AttentionTable({
               <Fragment key={row.matter.id}>
                 {showHeader && (
                   <TableRow key={`${row.bucket}-header`} className="border-b-0 hover:bg-transparent">
-                    <TableCell colSpan={4} className={cn("pb-3", firstGroup ? "pt-0" : "pt-10")}>
-                      <span className="t-eyebrow text-muted-foreground">
+                    <TableCell colSpan={4} className={cn("pb-4", firstGroup ? "pt-0" : "pt-12")}>
+                      <span className="t-subhead text-muted-foreground">
                         {BUCKET_LABEL[row.bucket]}
                       </span>
                     </TableCell>
@@ -73,28 +73,28 @@ export function AttentionTable({
                   key={row.matter.id}
                   data-halted={row.matter.halted || undefined}
                   className={cn(
-                    "group/row h-16 border-border transition-wash",
+                    "group/row h-20 border-border transition-wash",
                     row.bucket === "compliance" ? "hover:bg-surface-active" : "hover:bg-accent"
                   )}
                 >
-                  <TableCell className="w-[30%] py-4 align-top whitespace-normal">
+                  <TableCell className="w-[30%] py-5 align-top whitespace-normal">
                     <p className="t-body">{row.matter.name}</p>
                     <p className="t-detail text-muted-foreground">{row.matter.client}</p>
                   </TableCell>
 
                   <TableCell
                     className={cn(
-                      "w-[34%] py-4 align-top whitespace-normal t-detail text-ink-2",
+                      "w-[34%] py-5 align-top whitespace-normal t-detail text-ink-2",
                       row.matter.halted && "line-through decoration-1"
                     )}
                   >
                     {attentionDetail(row.matter, row.bucket)}
                   </TableCell>
 
-                  <TableCell className="w-[16%] py-4 align-top">
+                  <TableCell className="w-[16%] py-5 align-top">
                     {lawyer ? (
                       <div className="flex items-baseline gap-1.5">
-                        <span className="t-body text-[14px]">{lawyer.name}</span>
+                        <span className="t-body">{lawyer.name}</span>
                         <LoadRatio committed={lawyer.committedMatters} declared={lawyer.declaredAvailability} />
                       </div>
                     ) : (
@@ -102,7 +102,7 @@ export function AttentionTable({
                     )}
                   </TableCell>
 
-                  <TableCell className="w-[20%] py-4 align-top text-right">
+                  <TableCell className="w-[20%] py-5 align-top text-right">
                     <RowActions
                       matter={row.matter}
                       candidates={headroomList}

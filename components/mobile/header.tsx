@@ -11,7 +11,7 @@ export function MobileHeader({
 }) {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background px-4 py-3">
-      <p className="font-serif text-xl font-bold tracking-tight text-foreground">Mysil</p>
+      <p className="t-wordmark text-foreground">Mysil</p>
       <div className="flex items-center gap-1">
         <button
           type="button"
