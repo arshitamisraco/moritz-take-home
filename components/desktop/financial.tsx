@@ -1,6 +1,7 @@
 "use client";
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { ChartHeading } from "@/components/desktop/chart-heading";
 import { Section } from "@/components/desktop/section";
 import { AnimatedNumber } from "@/components/motion/number";
 import { ScrollReveal, StaggerList } from "@/components/motion/reveal";
@@ -134,7 +135,16 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
       {/* Band 2 — the two "why" reads */}
       <div className="mt-8 grid grid-cols-2 gap-12 border-t border-border pt-8">
         <ScrollReveal>
-          <p className="t-subhead">Revenue vs target</p>
+          <ChartHeading
+            title="Revenue vs target"
+            hint={
+              <>
+                Each point is one month of billed revenue. The dashed line is the{" "}
+                {formatUsdCompact(fx.revenueTargetUsd)} monthly target — above the line is ahead of
+                target, below it is short.
+              </>
+            }
+          />
           <ChartContainer config={revenueConfig} className="mt-4 h-52 w-full">
             <AreaChart data={fx.revenueByMonth} margin={{ left: 4, right: 96, top: 12, bottom: 0 }}>
               <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -187,7 +197,16 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
         </ScrollReveal>
 
         <ScrollReveal delay={0.08}>
-          <p className="t-subhead">Where delivery costs most</p>
+          <ChartHeading
+            title="Margin by matter type"
+            hint={
+              <>
+                One bar per kind of work. The bar is the share of the price kept as profit after
+                delivery, so a longer bar is better. The dashed line is the {MARGIN_FLOOR_PCT}%
+                floor — bars that stop short of it earn less than the firm allows.
+              </>
+            }
+          />
           <ChartContainer config={marginByTypeConfig} className="mt-4 h-52 w-full">
             <BarChart data={byType} layout="vertical" margin={{ left: 0, right: 12 }}>
               <CartesianGrid horizontal={false} stroke="var(--border)" />
