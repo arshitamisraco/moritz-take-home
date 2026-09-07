@@ -6,6 +6,7 @@ import { MobileNeedsAttention } from "@/components/mobile/needs-attention";
 import { MobileWorkload } from "@/components/mobile/workload";
 import { MobilePulse } from "@/components/mobile/pulse";
 import { MobileFinancial } from "@/components/mobile/financial";
+import { Footer } from "@/components/footer";
 import { Reveal, ScrollReveal } from "@/components/motion/reveal";
 import type { EffectiveFixture } from "@/lib/derive/apply-overlay";
 import type { LedgerAction } from "@/lib/state/types";
@@ -42,6 +43,7 @@ export function MobileShell({
       <ScrollReveal>
         <MobileFinancial fx={fx} />
       </ScrollReveal>
+      <Footer />
     </main>
   );
 }

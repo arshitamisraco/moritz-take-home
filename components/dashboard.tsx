@@ -10,6 +10,7 @@ import { Pulse } from "@/components/desktop/pulse";
 import { Financial } from "@/components/desktop/financial";
 import { CommandPalette, useCommandPaletteState } from "@/components/desktop/command-palette";
 import { MobileShell } from "@/components/mobile/mobile-shell";
+import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/motion/reveal";
 import { BackToTop, ScrollProgress } from "@/components/motion/scroll";
 import { applyOverlay } from "@/lib/derive/apply-overlay";
@@ -131,6 +132,7 @@ export function Dashboard({ fixture }: { fixture: Fixture }) {
             <Financial fx={fx} />
           </Reveal>
         </main>
+        <Footer />
       </div>
 
       <div className="md:hidden">
