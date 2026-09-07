@@ -2,7 +2,7 @@
 
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ledger/status-badge";
 import type { AtRiskRow } from "@/lib/derive/matters";
 import { attentionSeverity, type AttentionSummary } from "@/lib/derive/attention-summary";
@@ -23,12 +23,10 @@ export function NeedsAttention({
   rows,
   summary,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   summary: AttentionSummary;
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   const complianceRow = rows.find((r) => r.bucket === "compliance") ?? null;
   const quiet = summary.deadlines === 0 && summary.overloaded === 0 && summary.awaitingAction === 0 && !complianceRow;
@@ -41,46 +39,46 @@ export function NeedsAttention({
   ];
 
   return (
-    <Card id="attention" aria-label="Needs attention" className="mt-8">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          {!quiet && <TriangleAlert className="size-4" aria-hidden="true" />}
-          <h1 className="t-section">{quiet ? "Nothing needs attention" : "Needs attention"}</h1>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <section id="attention" aria-label="Needs attention" className="mt-8">
+      <div className="flex items-center gap-2">
+        {!quiet && <TriangleAlert className="size-4" aria-hidden="true" />}
+        <h1 className="t-section">{quiet ? "Nothing needs attention" : "Needs attention"}</h1>
+      </div>
+      <div className="mt-6">
         {complianceRow && (
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-breaking bg-breaking-tint px-6 py-6">
-            <button
-              type="button"
-              onClick={() => onOpenMatter(complianceRow.matter.id)}
-              className="flex flex-wrap items-center gap-4 text-left rounded-md transition-[background-color] duration-[120ms] ease-out hover:bg-breaking-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
-              <StatusBadge variant="breaking" label="compliance" />
-              <span className="t-body">
-                {complianceRow.matter.name} <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
-              </span>
-              <span className="t-detail" style={{ color: "var(--ink-2)" }}>
+          <Alert
+            variant="destructive"
+            className="flex flex-wrap items-center justify-between gap-4 px-6 py-6"
+          >
+            <div className="grid gap-1.5">
+              <AlertTitle className="t-body">
+                {complianceRow.matter.name}{" "}
+                <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
+              </AlertTitle>
+              <AlertDescription className="t-detail text-ink-2">
                 Conflicts not cleared, work started
-              </span>
-            </button>
-            {complianceRow.matter.conflictsExpedited ? (
-              <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
-            ) : (
-              <Button
-                className="shrink-0"
-                onClick={() =>
-                  dispatch({
-                    type: "expedite",
-                    matterId: complianceRow.matter.id,
-                    matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
-                  })
-                }
-              >
-                Expedite clearance
-              </Button>
-            )}
-          </div>
+              </AlertDescription>
+            </div>
+
+            {/* Primary action, right-aligned — it's the reason the row exists. */}
+            <div className="flex shrink-0 items-center">
+              {complianceRow.matter.conflictsExpedited ? (
+                <span className="t-eyebrow text-muted-foreground">expedited</span>
+              ) : (
+                <Button
+                  onClick={() =>
+                    dispatch({
+                      type: "expedite",
+                      matterId: complianceRow.matter.id,
+                      matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
+                    })
+                  }
+                >
+                  Expedite clearance
+                </Button>
+              )}
+            </div>
+          </Alert>
         )}
 
         {quiet ? (
@@ -88,16 +86,16 @@ export function NeedsAttention({
             Nothing needs you right now — every matter is inside its promised window.
           </p>
         ) : (
-          <div className={cn("grid grid-cols-3 divide-x divide-border rounded-md border border-border", complianceRow && "mt-6")}>
+          <div className={cn("grid grid-cols-3 gap-4", complianceRow && "mt-6")}>
             {stats.map((s) => (
               <button
                 key={s.label}
                 type="button"
                 onClick={() => scrollToSection(s.target)}
-                className="flex flex-col items-start gap-3 px-6 py-6 text-left transition-[background-color] duration-[120ms] ease-out first:rounded-l-md last:rounded-r-md hover:bg-accent active:bg-surface-active focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                className="flex flex-col items-start gap-3 rounded-lg bg-card p-6 text-left ring-1 ring-foreground/10 transition-wash hover:bg-accent active:bg-surface-active focus-ring"
               >
                 <div className="flex items-center justify-between w-full gap-2">
-                  <p className="t-eyebrow-plain text-muted-foreground">{s.label}</p>
+                  <p className="t-subhead text-muted-foreground">{s.label}</p>
                   <StatusBadge variant={s.state} />
                 </div>
                 <p
@@ -110,7 +108,7 @@ export function NeedsAttention({
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

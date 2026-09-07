@@ -1,5 +1,5 @@
 import type { EffectiveFixture } from "./apply-overlay";
-import { atRiskRows, type AtRiskRow } from "./matters";
+import { atRiskRows } from "./matters";
 
 export interface DeadlineHorizon {
   label: string;
@@ -23,12 +23,4 @@ export function deadlineHorizons(fx: EffectiveFixture): DeadlineHorizon[] {
   horizons.push({ label: "Today", count: today });
   horizons.push({ label: "This week", count: thisWeek });
   return horizons;
-}
-
-/** The most urgent handful — homepage shows this, the full list is one
- * click away in the detail table. */
-export function mostUrgent(fx: EffectiveFixture, limit = 3): AtRiskRow[] {
-  return atRiskRows(fx)
-    .filter((r) => r.bucket !== "compliance")
-    .slice(0, limit);
 }

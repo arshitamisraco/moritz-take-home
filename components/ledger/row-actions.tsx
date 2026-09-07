@@ -2,22 +2,40 @@
 
 import { Button } from "@/components/ui/button";
 import { ReassignMenu } from "@/components/ledger/reassign-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { LoadRatio } from "@/components/ledger/load-ratio";
+import { matterAction, matterLabel, DONE_LABEL } from "@/lib/derive/actions";
+import { bucketFor } from "@/lib/derive/matters";
 import type { EffectiveMatter } from "@/lib/derive/apply-overlay";
 import type { LawyerLoad } from "@/lib/derive/bench";
 import type { LedgerAction } from "@/lib/state/types";
 import { cn } from "@/lib/utils";
 
-function DoneMarker({ children }: { children: React.ReactNode }) {
-  return <span className="t-eyebrow text-muted-foreground">{children}</span>;
+export function DoneMarker({ children }: { children: React.ReactNode }) {
+  return <span className="t-subhead text-muted-foreground">{children}</span>;
 }
 
 /**
- * The row-level action bar — every control here acts, optimistically, in the
- * same overlay every other zone reads from. No icons (this is a ledger row),
- * no underlines (nothing here reveals or navigates — Reassign is the one
- * disclosure and it carries its own caret). Tiers follow the Sheet mapping:
- * Reassign secondary · Chase ghost · Expedite ghost · Halt work / Escalate
- * destructive.
+ * The row-level action bar — one primary control plus a More trigger
+ * holding the rest, so hovering a row never produces a wall of buttons
+ * (and never two destructive ones side by side). The verb and the
+ * overflow both come from matterAction, the same selection the mobile
+ * attention list runs. No icons (this is a ledger row) — the More trigger
+ * carries the ChevronDown caret that Reassign already established as the
+ * disclosure affordance. Halt work / Escalate sit below a separator and
+ * keep destructive styling on the item.
  */
 export function RowActions({
   matter,
@@ -33,14 +51,29 @@ export function RowActions({
   reveal?: "hover" | "always";
   className?: string;
 }) {
-  const label = `${matter.name} · ${matter.client}`;
-  const isOpen = matter.status === "open";
-  const isBreach = !matter.conflictsCleared && matter.workStarted;
-  const isAssigned = matter.effectiveLawyerId !== null;
+  const label = matterLabel(matter);
 
-  if (!isOpen) {
+  if (matter.status !== "open") {
     return <span className="t-detail text-muted-foreground">delivered</span>;
   }
+
+  const { primary, primaryDone, overflow } = matterAction(
+    { matter, bucket: bucketFor(matter) ?? "thisWeek" },
+    candidates
+  );
+
+  const reassignTo = (id: string, name: string) =>
+    dispatch({
+      type: "reassign",
+      matterId: matter.id,
+      matterLabel: label,
+      toLawyerId: id,
+      toLawyerName: name,
+    });
+
+  const isPickerPrimary = primary.kind === "reassign" || primary.kind === "assign";
+  const menuItems = overflow.filter((it) => !it.destructive);
+  const destructiveItems = overflow.filter((it) => it.destructive);
 
   return (
     <div
@@ -51,57 +84,78 @@ export function RowActions({
         className
       )}
     >
-      <ReassignMenu
-        candidates={candidates}
-        onPick={(id, name) =>
-          dispatch({ type: "reassign", matterId: matter.id, matterLabel: label, toLawyerId: id, toLawyerName: name })
-        }
-      />
-
-      {isAssigned &&
-        (matter.chased ? (
-          <DoneMarker>chased</DoneMarker>
-        ) : (
-          <Button
-            variant="ghost"
-            onClick={() => dispatch({ type: "chase", matterId: matter.id, matterLabel: label })}
-          >
-            Chase
-          </Button>
-        ))}
-
-      {isBreach &&
-        (matter.conflictsExpedited ? (
-          <DoneMarker>expedited</DoneMarker>
-        ) : (
-          <Button
-            variant="ghost"
-            onClick={() => dispatch({ type: "expedite", matterId: matter.id, matterLabel: label })}
-          >
-            Expedite clearance
-          </Button>
-        ))}
-
-      {matter.halted ? (
-        <DoneMarker>halted</DoneMarker>
+      {isPickerPrimary ? (
+        <ReassignMenu
+          label={primary.kind === "assign" ? "Assign" : "Reassign"}
+          candidates={candidates}
+          onPick={reassignTo}
+        />
+      ) : primaryDone ? (
+        <DoneMarker>{DONE_LABEL[primary.kind as "chase" | "expedite"]}</DoneMarker>
       ) : (
-        <Button
-          variant="destructive"
-          onClick={() => dispatch({ type: "halt", matterId: matter.id, matterLabel: label })}
-        >
-          Halt work
+        <Button variant="ghost" onClick={() => primary.action && dispatch(primary.action)}>
+          {primary.label}
         </Button>
       )}
 
-      {matter.escalated ? (
-        <DoneMarker>escalated</DoneMarker>
-      ) : (
-        <Button
-          variant="destructive"
-          onClick={() => dispatch({ type: "escalate", matterId: matter.id, matterLabel: label })}
-        >
-          Escalate
-        </Button>
+      {overflow.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="sm" data-icon="inline-end">
+                More
+                <ChevronDown className="size-3" aria-hidden="true" />
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end" className="w-52 rounded-lg">
+            <DropdownMenuGroup>
+              {menuItems.map((it) =>
+                it.kind === "reassign" ? (
+                  <DropdownMenuSub key="reassign">
+                    <DropdownMenuSubTrigger>Reassign</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="w-56">
+                      <DropdownMenuLabel className="t-subhead text-muted-foreground">
+                        headroom
+                      </DropdownMenuLabel>
+                      {candidates.map(({ lawyer }) => (
+                        <DropdownMenuItem
+                          key={lawyer.id}
+                          onClick={() => reassignTo(lawyer.id, lawyer.name)}
+                          className="flex items-center justify-between gap-3 rounded-md"
+                        >
+                          <span className="t-body">{lawyer.name}</span>
+                          <LoadRatio
+                            committed={lawyer.committedMatters}
+                            declared={lawyer.declaredAvailability}
+                          />
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                ) : (
+                  <DropdownMenuItem
+                    key={it.kind}
+                    className="rounded-md"
+                    onClick={() => it.action && dispatch(it.action)}
+                  >
+                    {it.label}
+                  </DropdownMenuItem>
+                )
+              )}
+              {destructiveItems.length > 0 && <DropdownMenuSeparator />}
+              {destructiveItems.map((it) => (
+                <DropdownMenuItem
+                  key={it.kind}
+                  className="rounded-md text-destructive"
+                  onClick={() => it.action && dispatch(it.action)}
+                >
+                  {it.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

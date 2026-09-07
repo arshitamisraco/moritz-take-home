@@ -1,30 +1,33 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { greetingWord, todayDateLabel } from "@/lib/format";
+import { Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-// Stands in for the signed-in admin's name until there's an auth session
-// to read it from.
-const ADMIN_NAME = "Arshita";
-
-export function Header({ onOpenPalette }: { onOpenPalette: () => void }) {
+export function Header({
+  onOpenPalette,
+  onNewMatter,
+}: {
+  onOpenPalette: () => void;
+  onNewMatter: () => void;
+}) {
   return (
-    <header className="flex items-center justify-between border-b border-border py-6">
-      <div>
-        <p className="t-section">
-          Good {greetingWord()}, {ADMIN_NAME}
-        </p>
-        <p className="t-detail text-muted-foreground">{todayDateLabel()} · Mysil</p>
-      </div>
-      <button
-        type="button"
-        onClick={onOpenPalette}
-        className="flex items-center gap-2 rounded-sm border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        <Search className="size-3.5" aria-hidden="true" />
-        <span className="t-detail">search</span>
-        <span className="t-eyebrow text-muted-foreground">⌘K</span>
-      </button>
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background py-4">
+      <p className="px-2 py-3 t-wordmark text-foreground">Mysil</p>
+
+      <nav className="flex items-center gap-2 px-2 py-3">
+        <Button
+          variant="ghost"
+          onClick={onOpenPalette}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <Search className="size-3.5" aria-hidden="true" />
+          Search
+        </Button>
+        <Button onClick={onNewMatter}>
+          <Plus className="size-3.5" aria-hidden="true" />
+          New matter
+        </Button>
+      </nav>
     </header>
   );
 }

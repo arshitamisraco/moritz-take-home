@@ -7,7 +7,6 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import { StatusBadge } from "@/components/ledger/status-badge";
 import { LoadRatio } from "@/components/ledger/load-ratio";
 import { RowActions } from "@/components/ledger/row-actions";
 import { attentionDetail } from "@/lib/derive/detail";
@@ -17,7 +16,8 @@ import type { LawyerLoad } from "@/lib/derive/bench";
 import type { LedgerAction } from "@/lib/state/types";
 import { cn } from "@/lib/utils";
 
-const BUCKET_LABEL: Partial<Record<TimeBucket, string>> = {
+const BUCKET_LABEL: Record<TimeBucket, string> = {
+  compliance: "Compliance",
   overdue: "Overdue",
   next4h: "Next 4 hours",
   today: "Today",
@@ -34,13 +34,11 @@ export function AttentionTable({
   fx,
   headroomList,
   dispatch,
-  onOpenMatter,
 }: {
   rows: AtRiskRow[];
   fx: EffectiveFixture;
   headroomList: LawyerLoad[];
   dispatch: (action: LedgerAction) => void;
-  onOpenMatter: (matterId: string) => void;
 }) {
   if (rows.length === 0) {
     return null;
@@ -48,22 +46,24 @@ export function AttentionTable({
 
   const withHeaders = rows.map((row, i) => ({
     row,
-    showHeader: row.bucket !== "compliance" && row.bucket !== rows[i - 1]?.bucket,
+    showHeader: row.bucket !== rows[i - 1]?.bucket,
+    /** Only the very first group sits flush; the rest need air above them. */
+    firstGroup: i === 0,
   }));
 
   return (
     <div className="overflow-x-auto">
       <Table>
         <TableBody>
-          {withHeaders.map(({ row, showHeader }) => {
+          {withHeaders.map(({ row, showHeader, firstGroup }) => {
             const lawyer = lawyerName(fx, row.matter.effectiveLawyerId);
 
             return (
               <Fragment key={row.matter.id}>
                 {showHeader && (
                   <TableRow key={`${row.bucket}-header`} className="border-b-0 hover:bg-transparent">
-                    <TableCell colSpan={5} className="pt-10 pb-3 first:pt-0">
-                      <span className="t-eyebrow text-muted-foreground">
+                    <TableCell colSpan={4} className={cn("pb-4", firstGroup ? "pt-0" : "pt-12")}>
+                      <span className="t-subhead text-muted-foreground">
                         {BUCKET_LABEL[row.bucket]}
                       </span>
                     </TableCell>
@@ -73,44 +73,28 @@ export function AttentionTable({
                   key={row.matter.id}
                   data-halted={row.matter.halted || undefined}
                   className={cn(
-                    "group/row h-16 cursor-pointer border-border transition-[background-color] duration-[120ms] ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-                    row.bucket === "compliance"
-                      ? "hover:bg-breaking-hover"
-                      : "hover:bg-accent active:bg-surface-active"
+                    "group/row h-20 border-border transition-wash",
+                    row.bucket === "compliance" ? "hover:bg-surface-active" : "hover:bg-accent"
                   )}
-                  onClick={() => onOpenMatter(row.matter.id)}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") onOpenMatter(row.matter.id);
-                  }}
                 >
-                  <TableCell className="w-[26%] py-4 align-top whitespace-normal">
+                  <TableCell className="w-[30%] py-5 align-top whitespace-normal">
                     <p className="t-body">{row.matter.name}</p>
                     <p className="t-detail text-muted-foreground">{row.matter.client}</p>
                   </TableCell>
 
-                  <TableCell className="w-[10%] py-4 align-top">
-                    {row.bucket === "compliance" ? (
-                      <StatusBadge variant="breaking" label="compliance" />
-                    ) : (
-                      row.matter.deadlineKind && <StatusBadge variant={row.matter.deadlineKind} />
-                    )}
-                  </TableCell>
-
                   <TableCell
                     className={cn(
-                      "w-[28%] py-4 align-top whitespace-normal t-detail",
+                      "w-[34%] py-5 align-top whitespace-normal t-detail text-ink-2",
                       row.matter.halted && "line-through decoration-1"
                     )}
-                    style={{ color: "var(--ink-2)" }}
                   >
                     {attentionDetail(row.matter, row.bucket)}
                   </TableCell>
 
-                  <TableCell className="w-[16%] py-4 align-top">
+                  <TableCell className="w-[16%] py-5 align-top">
                     {lawyer ? (
                       <div className="flex items-baseline gap-1.5">
-                        <span className="t-body text-[14px]">{lawyer.name}</span>
+                        <span className="t-body">{lawyer.name}</span>
                         <LoadRatio committed={lawyer.committedMatters} declared={lawyer.declaredAvailability} />
                       </div>
                     ) : (
@@ -118,10 +102,7 @@ export function AttentionTable({
                     )}
                   </TableCell>
 
-                  <TableCell
-                    className="w-[20%] py-4 align-top text-right"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <TableCell className="w-[20%] py-5 align-top text-right">
                     <RowActions
                       matter={row.matter}
                       candidates={headroomList}

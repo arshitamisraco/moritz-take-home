@@ -1,7 +1,8 @@
+import { CALM_ACTIVITY_KINDS, generateActivity } from "./activity-gen";
 import { HOUR } from "./clock";
 import { demoFixture } from "./demo";
 import { buildGoodDayLawyers } from "./lawyers";
-import type { ActivityEvent, Fixture, Matter, MatterType } from "./types";
+import type { Fixture, Matter, MatterType } from "./types";
 
 /**
  * Dataset B — the good day. Same shape, quiet values: zero at risk, zero
@@ -139,19 +140,17 @@ const GOOD_DAY_MATTERS: Matter[] = [
   },
 ];
 
-const GOOD_DAY_ACTIVITY: ActivityEvent[] = [
-  { id: "gd-a-1", offsetMs: -12 * 60_000, kind: "delivered", detail: "SAFE — Northlight Devices", matterId: "gd-delivered-1", lawyerId: null },
-  { id: "gd-a-2", offsetMs: -30 * 60_000, kind: "conflicts_cleared", detail: "Cobalt Robotics", matterId: "gd-filler-3", lawyerId: null },
-  { id: "gd-a-3", offsetMs: -50 * 60_000, kind: "meeting", detail: "Diligence call — Kestrel Bio", matterId: NAMED_OPEN[0].id, lawyerId: null },
-  { id: "gd-a-4", offsetMs: -75 * 60_000, kind: "onboarding", detail: "New client — Lumen Grid", matterId: "gd-filler-16", lawyerId: null },
-  { id: "gd-a-5", offsetMs: -95 * 60_000, kind: "filing_sent", detail: "83(b) — Windward Bio", matterId: "gd-filler-4", lawyerId: null },
-  { id: "gd-a-6", offsetMs: -110 * 60_000, kind: "opened", detail: "MSA — Marrow Data", matterId: "gd-filler-8", lawyerId: null },
-];
-
 export const goodDayFixture: Fixture = {
   lawyers: buildGoodDayLawyers(),
   matters: GOOD_DAY_MATTERS,
-  activity: GOOD_DAY_ACTIVITY,
+  // Quieter volume, and none of the went-wrong event kinds — see
+  // CALM_ACTIVITY_KINDS. Same derived-from-one-stream contract as demo.
+  activity: generateActivity({
+    seed: 0x600d_b,
+    matters: GOOD_DAY_MATTERS,
+    dailyRate: 24,
+    kinds: CALM_ACTIVITY_KINDS,
+  }),
   deliveryStats: { deliveredLast30Days: 150, lateLast30Days: 1 },
   marginByType: {
     safe: 73,
@@ -162,18 +161,17 @@ export const goodDayFixture: Fixture = {
     financing: 47,
     filing: 82,
   },
-  revenueByMonth: demoFixture.revenueByMonth,
+  revenueByMonth: [
+    { label: "Mar", amountUsd: 458_000, marginPct: 68 },
+    { label: "Apr", amountUsd: 470_000, marginPct: 68 },
+    { label: "May", amountUsd: 462_000, marginPct: 69 },
+    { label: "Jun", amountUsd: 488_000, marginPct: 69 },
+    { label: "Jul", amountUsd: 475_000, marginPct: 69 },
+    { label: "Aug", amountUsd: 430_000, marginPct: 69 },
+  ],
   revenueTargetUsd: demoFixture.revenueTargetUsd,
   realizedMarginPct: 69,
   quotedMarginPct: 68,
   marginTargetPct: 65,
   onTimeTargetPct: 98,
-  todayPulse: { filings: 9, meetings: 6, newMatters: 5, onboardings: 3 },
-  weeklyPulse: [
-    { label: "Mon", count: 20 },
-    { label: "Tue", count: 21 },
-    { label: "Wed", count: 18 },
-    { label: "Thu", count: 24 },
-    { label: "Fri", count: 23 },
-  ],
 };

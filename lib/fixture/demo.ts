@@ -1,6 +1,7 @@
+import { ALL_ACTIVITY_KINDS, generateActivity } from "./activity-gen";
 import { DAY, HOUR } from "./clock";
 import { buildDemoLawyers } from "./lawyers";
-import type { ActivityEvent, Fixture, Matter } from "./types";
+import type { Fixture, Matter } from "./types";
 
 /**
  * Dataset A — the demo state. Transcribed from docs/moritz-data.md: 11 at
@@ -379,21 +380,18 @@ const DEMO_MATTERS: Matter[] = [
   },
 ];
 
-const DEMO_ACTIVITY: ActivityEvent[] = [
-  { id: "a-1", offsetMs: -8 * 60_000, kind: "conflicts_cleared", detail: "Summit Robotics", matterId: "m-summit-incorporation", lawyerId: null },
-  { id: "a-2", offsetMs: -20 * 60_000, kind: "delivered", detail: "SAFE — Northlight Devices", matterId: "m-northlight-safe", lawyerId: null },
-  { id: "a-3", offsetMs: -45 * 60_000, kind: "opened", detail: "Series B — Aurora Fintech", matterId: "m-aurora-msa", lawyerId: null },
-  { id: "a-4", offsetMs: -58 * 60_000, kind: "meeting", detail: "Closing call — Kestrel Bio", matterId: "m-kestrel-series-a", lawyerId: null },
-  { id: "a-5", offsetMs: -62 * 60_000, kind: "filing_sent", detail: "83(b) — Contoso Biotech", matterId: "m-contoso-msa", lawyerId: null },
-  { id: "a-6", offsetMs: -80 * 60_000, kind: "onboarding", detail: "New client — Palisade Foods", matterId: "m-palisade-financing", lawyerId: null },
-  { id: "a-7", offsetMs: -98 * 60_000, kind: "reassigned", detail: "Vantage Health: Solberg → Kowalski", matterId: "m-vantage-msa", lawyerId: null },
-  { id: "a-8", offsetMs: -115 * 60_000, kind: "delivered", detail: "Option grant — Fenwick Systems", matterId: "m-fenwick-option-grant", lawyerId: null },
-];
-
 export const demoFixture: Fixture = {
   lawyers: buildDemoLawyers(),
   matters: DEMO_MATTERS,
-  activity: DEMO_ACTIVITY,
+  // One rolling event stream — every Firm Pulse number is derived from it,
+  // so the counts and the log cannot disagree. Seeded, so SSR and client
+  // resolve the same stream.
+  activity: generateActivity({
+    seed: 0x5eed_a1,
+    matters: DEMO_MATTERS,
+    dailyRate: 30,
+    kinds: ALL_ACTIVITY_KINDS,
+  }),
   deliveryStats: { deliveredLast30Days: 150, lateLast30Days: 9 },
   marginByType: {
     safe: 71,
@@ -405,26 +403,16 @@ export const demoFixture: Fixture = {
     filing: 80,
   },
   revenueByMonth: [
-    { label: "Mar", amountUsd: 452_000 },
-    { label: "Apr", amountUsd: 500_000 },
-    { label: "May", amountUsd: 485_000 },
-    { label: "Jun", amountUsd: 510_000 },
-    { label: "Jul", amountUsd: 495_000 },
-    { label: "Aug", amountUsd: 430_000 },
+    { label: "Mar", amountUsd: 452_000, marginPct: 71 },
+    { label: "Apr", amountUsd: 500_000, marginPct: 70 },
+    { label: "May", amountUsd: 485_000, marginPct: 69 },
+    { label: "Jun", amountUsd: 510_000, marginPct: 68 },
+    { label: "Jul", amountUsd: 495_000, marginPct: 67 },
+    { label: "Aug", amountUsd: 430_000, marginPct: 66 },
   ],
   revenueTargetUsd: 480_000,
   realizedMarginPct: 66,
   quotedMarginPct: 68,
   marginTargetPct: 65,
   onTimeTargetPct: 98,
-  // Same-day tally, separate fact from DEMO_ACTIVITY's last-8-events log —
-  // see the TodayPulse doc comment in fixture/types.ts.
-  todayPulse: { filings: 12, meetings: 8, newMatters: 6, onboardings: 4 },
-  weeklyPulse: [
-    { label: "Mon", count: 22 },
-    { label: "Tue", count: 27 },
-    { label: "Wed", count: 19 },
-    { label: "Thu", count: 31 },
-    { label: "Fri", count: 30 },
-  ],
 };

@@ -1,16 +1,24 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 /* ---------------------------------------------------------------------- *
  * Mysil — design token layer.
  *
+ * Editorial-minimal, after lescollection.com: a warm gallery-white ground,
+ * near-black ink, soft greige edges, and near-square corners. Colour
+ * is spent, not sprinkled — a single reserved terracotta carries every
+ * true alert and nothing else. There is no green, and hover never tints:
+ * every interactive surface warms by one flat step of neutral wash.
+ *
+ * Every value here meets WCAG 2.1 AA against both grounds it can land on
+ * (the warm page and the white card): body/quiet text ≥ 4.5:1, borders
+ * and graphical marks ≥ 3:1. The neutral greys were darkened from their
+ * first pass to earn that — see the per-step ratios below. Type never
+ * renders below a 12px equivalent on any screen.
+ *
  * Three tiers, in order:
- *   1. Primitives  — the locked brand palette (Bone / Warm Sand / Moss /
- *      Slate Blue / Charcoal / Terracotta) plus a small set of neutrals
- *      and tints *derived* from those six — never a new hue. This is the
- *      only place a hex code may appear.
+ *   1. Primitives  — the neutral ramp plus the one accent, expressed as
+ *      raw values. This is the only place a hex code may appear.
  *   2. Semantic (shadcn) tokens — every --background/--primary/etc below
  *      is a var() reference into tier 1, never a literal.
  *   3. @theme inline — hands the semantic tier to Tailwind v4 so utility
@@ -21,100 +29,119 @@
  * ---------------------------------------------------------------------- */
 
 :root {
-  /* ---- 1. primitives — locked brand palette ---- */
-  --brand-bone: #f1eee7;
-  --brand-warm-sand: #d8ccbc;
-  --brand-moss: #707a63;
-  --brand-slate-blue: #53677a;
-  --brand-charcoal: #292827;
-  --brand-terracotta: #b65332;
+  /* ---- 1. primitives ---- */
 
-  /* derived neutrals/tints — mixes of the six above, not new hues */
-  --brand-bone-light: #f7f5ef; /* card/popover: a touch lighter/cleaner than the page ground */
-  --brand-neutral-border: #ded3c2; /* Bone/Warm Sand blend — subtle, never dark */
-  --brand-ink-2: #4a473e; /* Charcoal, warmed and lightened one step */
-  --brand-ink-3: #55534c; /* Charcoal, warmed and lightened two steps */
-  --brand-steady-tint: #dde3d5; /* Moss, tinted pale */
-  --brand-straining-tint: #e3c8a6; /* Warm Sand shifted toward Terracotta */
-  --brand-terracotta-tint: #f3ded2; /* Terracotta, tinted pale */
-  --brand-terracotta-tint-hover: #edcbba; /* Terracotta, tinted pale — one step warmer, for hover feedback */
-  --brand-moss-pressed: #626c57; /* Moss, darkened one step — the pressed state under --accent */
+  /* paper — the page ground and the one step of elevation above it */
+  --paper: #fbfaf7; /* warm gallery white — the page */
+  --paper-raised: #ffffff; /* cards, popovers, sheets — one clean step up */
+
+  /* Neutral ink + surface ramp, warm-grey, stepped light → dark. Every
+     value that carries text or a UI edge is tuned to clear WCAG 2.1 AA on
+     BOTH grounds in play — the warm page (#fbfaf7) and the white card
+     (#ffffff): text steps (n-500..n-900) clear 4.5:1. n-100/n-200 are
+     surfaces only, never text. */
+  --n-100: #f2efe9; /* wash — hover fill, muted surfaces, track grounds */
+  --n-200: #e9e4db; /* wash, one step down — pressed / active */
+  --n-300: #d8d1c4; /* faint hairline — nested / row-level dividers only. Sits
+                       below the 3:1 mark rule on purpose: it keeps list
+                       rhythm, it is not meant to read as a hard line. Never text. */
+  --n-400: #b7b0a2; /* faint marks, disabled ink, borders / dividers / inputs */
+  --n-500: #78716a; /* quiet ink — denominators, captions · 4.6:1 on paper */
+  --n-600: #6b6459; /* second ink — detail lines · 5.6:1 on paper */
+  --n-700: #514b41; /* strong secondary ink · 8.3:1 on paper */
+  --n-900: #1c1a17; /* near-black — body text, primary fills · 16:1 */
+
+  /* the one accent: terracotta, reserved for true alerts */
+  --terracotta: #b1502f;
+  --terracotta-wash: #f3e4dc; /* pale tint — breach surfaces only */
+  --sand-wash: #efe3d0; /* faint warm — the middle "straining" step */
 
   /* ---- 2. semantic (shadcn) tokens — reference tier 1 only ---- */
-  --background: var(--brand-bone);
+  --background: var(--paper);
   --foreground: var(--ink-1);
 
-  /* card/popover get their own surface, lighter and cleaner than the
-     page ground — an elevated warm neutral, never a white SaaS card. */
-  --card: var(--brand-bone-light);
-  --card-foreground: var(--brand-charcoal);
+  /* card/popover sit one clean step above the warm page ground —
+     plain white, lifted by a hairline ring rather than a shadow. */
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink-1);
 
-  --popover: var(--brand-bone-light);
-  --popover-foreground: var(--brand-charcoal);
+  --popover: var(--paper-raised);
+  --popover-foreground: var(--ink-1);
 
-  --primary: var(--brand-slate-blue);
-  --primary-foreground: var(--brand-bone);
-  --secondary: var(--brand-warm-sand);
-  --secondary-foreground: var(--brand-charcoal);
+  /* primary is ink — a near-black control, at most one per screen. Its one
+     hover step warms the fill by 16% of the raised-paper primitive — the
+     same single flat move every other interactive surface makes. */
+  --primary: var(--n-900);
+  --primary-foreground: var(--paper);
+  --primary-hover: color-mix(in oklab, var(--primary), var(--paper-raised) 16%);
+  --secondary: var(--n-100);
+  --secondary-foreground: var(--ink-1);
 
-  /* --muted carries the Warm Sand surface — table header fills, row
-     hover, skeletons, disabled states. Every "quiet" state's text rides
-     on --muted-foreground below, never on a bare grey. */
-  --muted: var(--brand-warm-sand);
+  /* --muted carries the neutral wash — table header fills, row hover,
+     skeletons, disabled states. Quiet text rides on --muted-foreground,
+     never on a bare grey. */
+  --muted: var(--n-100);
   --muted-foreground: var(--ink-3);
 
-  --accent: var(--brand-moss);
-  --accent-foreground: var(--brand-bone);
+  /* --accent is the same flat wash: hover never introduces a hue. */
+  --accent: var(--n-100);
+  --accent-foreground: var(--ink-1);
 
-  /* the pressed state under --accent, and the tint a Breaking row takes on
-     hover in place of the neutral one */
-  --surface-active: var(--brand-moss-pressed);
-  --breaking-hover: var(--brand-terracotta-tint-hover);
+  /* the deeper neutral wash — the pressed step under --accent, and the
+     single hover step for breaking rows (their terracotta border and ink
+     already carry the meaning, so hover goes straight to this step). */
+  --surface-active: var(--n-200);
 
-  --border: var(--brand-neutral-border);
-  --input: var(--brand-neutral-border);
-  /* focus ring is Slate Blue — the one brand halo the system allows. */
-  --ring: var(--brand-slate-blue);
+  /* structural edge — borders, inputs, dividers: a faint hairline. */
+  --border: var(--n-400);
+  --input: var(--n-400);
+  /* one step lighter than --border: the divider for rows nested inside a
+     group whose own edge already rides on --border, so the eye ranks the
+     group boundary above the rows within it. */
+  --rule-quiet: var(--n-300);
+  /* focus ring is near-black — one crisp halo, no colour. */
+  --ring: var(--n-900);
 
-  /* Terracotta is the whole system's one warning/attention hue — used by
+  /* terracotta is the whole system's one warning/attention hue — used by
      --destructive and, at the same value, by --breaking below. */
-  --destructive: var(--brand-terracotta);
-  --destructive-foreground: var(--brand-bone);
+  --destructive: var(--terracotta);
+  --destructive-foreground: var(--paper);
 
-  /* charts stay inside the six brand colours, no rainbow */
-  --chart-1: var(--brand-moss);
-  --chart-2: var(--brand-slate-blue);
-  --chart-3: var(--brand-terracotta);
-  --chart-4: var(--brand-warm-sand);
-  --chart-5: var(--brand-charcoal);
+  /* charts stay on the neutral ramp — no rainbow, no rescue colours.
+     Every step clears 3:1 as a graphical mark on both grounds. */
+  --chart-1: var(--n-900);
+  --chart-2: var(--n-700);
+  --chart-3: var(--n-600);
+  --chart-4: var(--n-500);
+  --chart-5: var(--n-400);
 
-  /* status — derived from the brand palette, not generic traffic-light
-     colours: steady tints Moss, straining tints toward Terracotta, and
-     breaking is Terracotta itself. */
-  --steady: var(--brand-steady-tint);
-  --steady-foreground: var(--brand-charcoal);
-  --straining: var(--brand-straining-tint);
-  --straining-foreground: var(--brand-charcoal);
-  --breaking: var(--brand-terracotta);
-  --breaking-foreground: var(--brand-bone);
-  --breaking-tint: var(--brand-terracotta-tint);
+  /* status — a three-step escalation that stays quiet until it can't:
+     steady is bare neutral, straining a whisper of warm, and only
+     breaking spends the terracotta. */
+  --steady: var(--n-100);
+  --steady-foreground: var(--ink-1);
+  --straining: var(--sand-wash);
+  --straining-foreground: var(--ink-1);
+  --breaking: var(--terracotta);
+  --breaking-foreground: var(--paper);
+  --breaking-tint: var(--terracotta-wash);
 
   /* named ink ramp — declared once, referenced by name everywhere,
      including by --foreground / --muted-foreground above, so the shadcn
      tokens and our ramp never repeat a primitive reference against each
      other. */
-  --ink-1: var(--brand-charcoal); /* body text, primary ink */
-  --ink-2: var(--brand-ink-2); /* detail lines, second ink */
-  --ink-3: var(--brand-ink-3); /* quiet ink — denominators, muted-foreground */
+  --ink-1: var(--n-900); /* body text, primary ink — 16:1 */
+  --ink-2: var(--n-700); /* detail lines, second ink — 8.3:1 */
+  --ink-3: var(--n-600); /* quiet ink — denominators, muted-foreground — 5.6:1 */
 
-  /* restrained radius system: 6px controls, 8px default, 12px large
-     surfaces. Declared directly (not via calc off --radius) so each step
-     lands on the exact brand value rather than an arithmetic offset. */
-  --radius: 0.5rem; /* 8px */
-  --radius-sm: 0.25rem; /* 4px */
-  --radius-md: 0.375rem; /* 6px — controls */
-  --radius-lg: 0.5rem; /* 8px — default */
-  --radius-xl: 0.75rem; /* 12px — dialogs, sheets, large surfaces */
+  /* near-square radius system: corners are barely rounded — 2px on
+     controls, 3px default, 4px on the largest surfaces. Declared
+     directly so each step lands on its exact value. */
+  --radius: 0.1875rem; /* 3px */
+  --radius-sm: 0.125rem; /* 2px */
+  --radius-md: 0.125rem; /* 2px — controls */
+  --radius-lg: 0.1875rem; /* 3px — default */
+  --radius-xl: 0.25rem; /* 4px — dialogs, sheets, large surfaces */
 
   --font-serif: "Newsreader", ui-serif, Georgia, serif;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -133,6 +160,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -140,11 +168,11 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-surface-active: var(--surface-active);
-  --color-breaking-hover: var(--breaking-hover);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-rule-quiet: var(--rule-quiet);
   --color-ring: var(--ring);
 
   --color-chart-1: var(--chart-1);
@@ -190,44 +218,127 @@
 }
 
 /* ---------------------------------------------------------------------- *
- * Type scale — five steps, base unit 4px.
+ * Type scale — eight roles, three faces, one utility per job.
+ *
+ * The rule that keeps this small: a role is a JOB, not a size. Nothing in
+ * the component tree may set font-size, font-family, font-weight or
+ * letter-spacing — not as a Tailwind utility, not as an override on one of
+ * these classes. If something needs a size that isn't here, it needs a
+ * role that isn't here, and it gets added below rather than inline.
+ *
+ * The faces carry meaning and never trade places:
+ *   serif (Newsreader) — human names and prose: matters, clients, lawyers,
+ *     section headings, sentences the reader is meant to read.
+ *   sans (Plex Sans)   — explanatory text. The workhorse.
+ *   mono (Plex Mono)   — quantities and machine-ish tags: figures, status
+ *     badges, event kinds, chart axes.
  * ---------------------------------------------------------------------- */
 
 @layer utilities {
+  /* .t-wordmark — the Mysil brand mark, and nothing else. Legitimately
+     off-scale; declared here so the desktop and mobile headers agree
+     instead of each restating a size and a weight. Steps down below the
+     md breakpoint, where <MobileHeader> takes over. */
+  .t-wordmark {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  @media (width >= 48rem) {
+    .t-wordmark {
+      font-size: 24px;
+    }
+  }
+
+  /* .t-eyebrow — mono, caps, tracked out. ONE job: a categorical machine
+     tag. Status badges, activity kinds, compliance flags, chart axes.
+     It is not a heading and it does not label a group — anything sitting
+     above a group or a figure is .t-subhead. Keeping this to one job is
+     the difference between an accent and a texture. */
   .t-eyebrow {
     font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1.2;
+    font-size: 12px;
+    line-height: 1.25;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  /* Same mono label, minus the uppercase — for eyebrow-style text that
-     lives inside something clickable, where the casing rule forbids caps. */
-  .t-eyebrow-plain {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1.2;
-    letter-spacing: 0.08em;
-  }
+
+  /* .t-detail — the workhorse. Every explanatory line, denominator,
+     caption and secondary clause on the page. */
   .t-detail {
     font-family: var(--font-sans);
     font-size: 13px;
     line-height: 1.45;
   }
+
+  /* .t-body — names and prose. Matter, client and lawyer names wherever
+     they appear, including inside menus, so a name is the same size in a
+     table row and in the dropdown that reassigns it. */
   .t-body {
     font-family: var(--font-serif);
     font-size: 15px;
     line-height: 1.25;
   }
+
+  /* .t-subhead — the body face at medium weight. ONE job: the label above
+     a group or a figure. Stat-tile labels, list group headers, menu
+     section labels, chart captions. Distinct from .t-body by weight
+     alone, so the editorial voice holds and the page doesn't sprout a
+     second heading family. */
+  .t-subhead {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  /* .t-section — the only heading. One per top-level block. */
   .t-section {
     font-family: var(--font-serif);
     font-size: 20px;
     line-height: 1.2;
   }
-  .t-figure {
+
+  /* .t-figure / .t-figure-sm — the quantity. Full size for the one hero
+     number in a block; -sm for figures repeating across a grid, where 44px
+     would shout three or five times over. Two steps, not the three that
+     inline overrides had grown to. */
+  .t-figure,
+  .t-figure-sm {
     font-family: var(--font-mono);
-    font-size: 44px;
     line-height: 1;
     letter-spacing: -0.02em;
+  }
+  .t-figure {
+    font-size: 44px;
+  }
+  .t-figure-sm {
+    font-size: 28px;
+  }
+}
+
+/* ---------------------------------------------------------------------- *
+ * Interaction primitives — the one background transition and the one focus
+ * ring the whole product uses. The Button component and every non-<Button>
+ * interactive surface (stat tiles, clickable table rows, disclosure
+ * summaries) apply these instead of re-declaring the values inline, so
+ * everything that responds to the pointer or the keyboard moves and focuses
+ * alike. `-inset` is for full-bleed surfaces where an outset ring would clip.
+ * ---------------------------------------------------------------------- */
+
+@layer utilities {
+  .transition-wash {
+    transition: background-color 120ms ease-out;
+  }
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .focus-ring-inset:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
 }

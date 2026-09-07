@@ -27,6 +27,24 @@ export function dayLabel(offsetMs: number): string {
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
 }
 
+/**
+ * "Today · Mon 7 Sep" / "Yesterday · Sun 6 Sep" / "Fri 4 Sep" — a calendar
+ * label for a day inside a backward-looking window. dayLabel only names
+ * weekdays for forward offsets ("tomorrow", "Wednesday"), so it can't label
+ * the pulse's trailing 7 days.
+ */
+export function pastDayLabel(offsetMs: number): string {
+  const d = offsetToDate(offsetMs);
+  const now = offsetToDate(0);
+  const dUtcDay = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const nowUtcDay = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const diffDays = Math.round((dUtcDay - nowUtcDay) / DAY);
+  const stamp = `${WEEKDAYS[d.getUTCDay()].slice(0, 3)} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+  if (diffDays === 0) return `Today · ${stamp}`;
+  if (diffDays === -1) return `Yesterday · ${stamp}`;
+  return stamp;
+}
+
 export function formatPct(value: number): string {
   return value < 0 ? `−${Math.abs(value)}%` : `${value}%`;
 }

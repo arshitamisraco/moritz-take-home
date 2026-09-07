@@ -23,15 +23,18 @@ export function ReassignMenu({
   candidates,
   onPick,
   disabled,
+  label = "Reassign",
 }: {
   candidates: LawyerLoad[];
   onPick: (lawyerId: string, lawyerName: string) => void;
   disabled?: boolean;
+  /** "Assign" on an unplaced row, where nobody holds the matter yet. */
+  label?: string;
 }) {
   if (candidates.length === 0) {
     return (
       <span className="t-detail text-muted-foreground" aria-disabled="true">
-        Reassign
+        {label}
       </span>
     );
   }
@@ -41,14 +44,14 @@ export function ReassignMenu({
         disabled={disabled}
         render={
           <Button variant="outline" size="sm" data-icon="inline-end">
-            Reassign
+            {label}
             <ChevronDown className="size-3" aria-hidden="true" />
           </Button>
         }
       />
       <DropdownMenuContent align="start" className="w-56 rounded-lg">
         <DropdownMenuGroup>
-          <DropdownMenuLabel className="t-eyebrow text-muted-foreground">
+          <DropdownMenuLabel className="t-subhead text-muted-foreground">
             headroom
           </DropdownMenuLabel>
           {candidates.map(({ lawyer }) => (
@@ -57,7 +60,7 @@ export function ReassignMenu({
               onClick={() => onPick(lawyer.id, lawyer.name)}
               className="flex items-center justify-between gap-3 rounded-md"
             >
-              <span className="t-body text-[14px]">{lawyer.name}</span>
+              <span className="t-body">{lawyer.name}</span>
               <LoadRatio committed={lawyer.committedMatters} declared={lawyer.declaredAvailability} />
             </DropdownMenuItem>
           ))}
