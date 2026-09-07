@@ -2,6 +2,7 @@
 
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ledger/status-badge";
 import type { AtRiskRow } from "@/lib/derive/matters";
@@ -48,33 +49,39 @@ export function NeedsAttention({
       </CardHeader>
       <CardContent>
         {complianceRow && (
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-breaking bg-breaking-tint px-6 py-6">
-            <div className="flex flex-wrap items-center gap-4">
-              <StatusBadge variant="breaking" label="compliance" />
-              <span className="t-body">
-                {complianceRow.matter.name} <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
-              </span>
-              <span className="t-detail text-ink-2">
+          <Alert
+            variant="destructive"
+            className="flex flex-wrap items-center justify-between gap-4 px-6 py-6"
+          >
+            <div className="grid gap-1.5">
+              <AlertTitle className="t-body">
+                {complianceRow.matter.name}{" "}
+                <span className="text-muted-foreground">· {complianceRow.matter.client}</span>
+              </AlertTitle>
+              <AlertDescription className="t-detail text-ink-2">
                 Conflicts not cleared, work started
-              </span>
+              </AlertDescription>
             </div>
-            {complianceRow.matter.conflictsExpedited ? (
-              <span className="t-eyebrow shrink-0 text-muted-foreground">expedited</span>
-            ) : (
-              <Button
-                className="shrink-0"
-                onClick={() =>
-                  dispatch({
-                    type: "expedite",
-                    matterId: complianceRow.matter.id,
-                    matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
-                  })
-                }
-              >
-                Expedite clearance
-              </Button>
-            )}
-          </div>
+
+            {/* Primary action, right-aligned — it's the reason the row exists. */}
+            <div className="flex shrink-0 items-center">
+              {complianceRow.matter.conflictsExpedited ? (
+                <span className="t-eyebrow text-muted-foreground">expedited</span>
+              ) : (
+                <Button
+                  onClick={() =>
+                    dispatch({
+                      type: "expedite",
+                      matterId: complianceRow.matter.id,
+                      matterLabel: `${complianceRow.matter.name} · ${complianceRow.matter.client}`,
+                    })
+                  }
+                >
+                  Expedite clearance
+                </Button>
+              )}
+            </div>
+          </Alert>
         )}
 
         {quiet ? (

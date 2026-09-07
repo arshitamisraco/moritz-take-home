@@ -4,17 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Five tiers, not one flat action style. Rest state carries no fill for
- * the quiet tiers; hover warms them by a single flat step of neutral wash
- * (--accent), at a 2px radius, over a 120ms background-color transition and
- * nothing else — no hue, shadow, transform, scale, or hover border. Focus
- * draws a 2px near-black ring offset from the button. Heights: h-8 for
- * Primary/Secondary, h-7 for Ghost and the text-only Destructive that sits
- * inside rows and the Sheet.
+ * Five visual tiers over one shared geometry. Every tier is the same box —
+ * height and padding come from `size` alone (h-8 at default), never from the
+ * variant. Rest state carries no fill for the quiet tiers; hover warms them
+ * by a single flat step of neutral wash (--accent), at a 2px radius, over a
+ * 120ms background-color transition and nothing else — no hue, shadow,
+ * transform, scale, or hover border. Focus draws a 2px near-black ring offset
+ * from the button.
  *
  *   default (Primary)     near-black ink fill, paper text — max one per screen
  *   outline (Secondary)   transparent, 1px --border, ink text
- *   ghost                 text only at rest, neutral wash on hover, 4px 8px pad
+ *   ghost                 text only at rest, neutral wash on hover
  *   link                  Ink 2, 1px underline at 0.15em offset — reveals/navigates
  *   destructive           Terracotta text, NO fill, neutral wash on hover
  */
@@ -24,23 +24,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "h-8 bg-primary text-primary-foreground hover:bg-primary-hover",
+          "bg-primary text-primary-foreground hover:bg-primary-hover",
         outline:
-          "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
+          "border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:
-          "h-8 border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
+          "border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
         ghost:
-          "h-7 bg-transparent hover:bg-accent aria-expanded:bg-accent",
+          "bg-transparent hover:bg-accent aria-expanded:bg-accent",
         destructive:
-          "h-7 bg-transparent text-destructive hover:bg-surface-active",
+          "bg-transparent text-destructive hover:bg-surface-active",
         link: "text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground",
       },
       size: {
         default:
-          "gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "gap-1 rounded-md px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "gap-1 rounded-md px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-7 gap-1 rounded-md px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 gap-1 rounded-md px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         icon: "size-8",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-7 rounded-md",
@@ -48,9 +48,6 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      // Ghost owns its own padding per the hover-inset rule (4px 8px, pulled
-      // back with -mx-2 by the caller).
-      { variant: "ghost", size: "default", class: "px-2 py-1" },
       // Link is pure text — no box padding.
       { variant: "link", size: "default", class: "px-0" },
     ],

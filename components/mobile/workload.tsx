@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ledger/status-badge";
 import { ReassignMenu } from "@/components/ledger/reassign-menu";
 import { MobileAttentionList } from "@/components/mobile/attention-list";
 import { capacityOutliers } from "@/lib/derive/capacity";
@@ -38,7 +37,6 @@ function ExceptionList({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {m.deadlineKind && <StatusBadge variant={m.deadlineKind} />}
             <ReassignMenu
               candidates={room}
               onPick={(id, name) =>

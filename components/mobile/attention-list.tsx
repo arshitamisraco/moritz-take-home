@@ -1,6 +1,5 @@
 "use client";
 
-import { StatusBadge } from "@/components/ledger/status-badge";
 import { attentionDetail } from "@/lib/derive/detail";
 import type { AtRiskRow, TimeBucket } from "@/lib/derive/matters";
 import type { LedgerAction } from "@/lib/state/types";
@@ -56,10 +55,6 @@ export function MobileAttentionList({
               </p>
             )}
             <div className="flex w-full flex-col gap-1.5 px-4 pt-4 pb-2">
-              {row.bucket !== "compliance" && row.matter.deadlineKind && (
-                <StatusBadge variant={row.matter.deadlineKind} />
-              )}
-              {row.bucket === "compliance" && <StatusBadge variant="breaking" label="compliance" />}
               <p className="t-body">{row.matter.name}</p>
               <p className="t-detail text-muted-foreground">{row.matter.client}</p>
               <p

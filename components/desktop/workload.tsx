@@ -50,7 +50,6 @@ function ExceptionList({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {m.deadlineKind && <StatusBadge variant={m.deadlineKind} />}
             <ReassignMenu
               candidates={room}
               onPick={(id, name) =>

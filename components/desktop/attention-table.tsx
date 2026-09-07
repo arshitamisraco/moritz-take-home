@@ -7,7 +7,6 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import { StatusBadge } from "@/components/ledger/status-badge";
 import { LoadRatio } from "@/components/ledger/load-ratio";
 import { RowActions } from "@/components/ledger/row-actions";
 import { attentionDetail } from "@/lib/derive/detail";
@@ -17,7 +16,8 @@ import type { LawyerLoad } from "@/lib/derive/bench";
 import type { LedgerAction } from "@/lib/state/types";
 import { cn } from "@/lib/utils";
 
-const BUCKET_LABEL: Partial<Record<TimeBucket, string>> = {
+const BUCKET_LABEL: Record<TimeBucket, string> = {
+  compliance: "Compliance",
   overdue: "Overdue",
   next4h: "Next 4 hours",
   today: "Today",
@@ -46,21 +46,23 @@ export function AttentionTable({
 
   const withHeaders = rows.map((row, i) => ({
     row,
-    showHeader: row.bucket !== "compliance" && row.bucket !== rows[i - 1]?.bucket,
+    showHeader: row.bucket !== rows[i - 1]?.bucket,
+    /** Only the very first group sits flush; the rest need air above them. */
+    firstGroup: i === 0,
   }));
 
   return (
     <div className="overflow-x-auto">
       <Table>
         <TableBody>
-          {withHeaders.map(({ row, showHeader }) => {
+          {withHeaders.map(({ row, showHeader, firstGroup }) => {
             const lawyer = lawyerName(fx, row.matter.effectiveLawyerId);
 
             return (
               <Fragment key={row.matter.id}>
                 {showHeader && (
                   <TableRow key={`${row.bucket}-header`} className="border-b-0 hover:bg-transparent">
-                    <TableCell colSpan={5} className="pt-10 pb-3 first:pt-0">
+                    <TableCell colSpan={4} className={cn("pb-3", firstGroup ? "pt-0" : "pt-10")}>
                       <span className="t-eyebrow text-muted-foreground">
                         {BUCKET_LABEL[row.bucket]}
                       </span>
@@ -75,22 +77,14 @@ export function AttentionTable({
                     row.bucket === "compliance" ? "hover:bg-surface-active" : "hover:bg-accent"
                   )}
                 >
-                  <TableCell className="w-[26%] py-4 align-top whitespace-normal">
+                  <TableCell className="w-[30%] py-4 align-top whitespace-normal">
                     <p className="t-body">{row.matter.name}</p>
                     <p className="t-detail text-muted-foreground">{row.matter.client}</p>
                   </TableCell>
 
-                  <TableCell className="w-[10%] py-4 align-top">
-                    {row.bucket === "compliance" ? (
-                      <StatusBadge variant="breaking" label="compliance" />
-                    ) : (
-                      row.matter.deadlineKind && <StatusBadge variant={row.matter.deadlineKind} />
-                    )}
-                  </TableCell>
-
                   <TableCell
                     className={cn(
-                      "w-[28%] py-4 align-top whitespace-normal t-detail text-ink-2",
+                      "w-[34%] py-4 align-top whitespace-normal t-detail text-ink-2",
                       row.matter.halted && "line-through decoration-1"
                     )}
                   >
