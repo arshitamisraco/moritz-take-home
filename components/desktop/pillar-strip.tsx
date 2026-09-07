@@ -45,10 +45,10 @@ function PillarCard({ pillarKey, result }: { pillarKey: PillarKey; result: Pilla
                 </span>
               }
             />
-            <TooltipContent side="bottom" align="end" className="flex max-w-64 flex-col gap-1 py-2 text-left normal-case">
+            <TooltipContent side="bottom" align="end" className="flex max-w-64 flex-col items-start gap-1 py-2 text-left normal-case">
               {PILLAR_STATES.map((s) => (
                 <span key={s} className={cn("t-detail", s === result.state && "font-semibold")}>
-                  {s}: {rules[s]}
+                  <span className="uppercase">{s}</span>: {rules[s]}
                 </span>
               ))}
             </TooltipContent>
