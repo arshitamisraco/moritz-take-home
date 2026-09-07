@@ -223,6 +223,20 @@
     @apply bg-background text-foreground font-sans;
     font-variant-numeric: tabular-nums;
   }
+  /* Every in-page jump (pillar cards, command palette) travels instead of
+     cutting, and lands clear of the sticky header. */
+  html {
+    scroll-behavior: smooth;
+  }
+  section[id],
+  main[id] {
+    scroll-margin-top: 5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------- *
