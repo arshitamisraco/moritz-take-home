@@ -20,16 +20,6 @@ pnpm lint
 npx tsc --noEmit
 ```
 
-## View states
-
-| URL | What it shows |
-| --- | --- |
-| `/` | The demo day: a conflicts breach, two overdue matters, six over-committed lawyers, four matters below the margin floor. |
-| `/?state=good` | A quiet day. Every pillar steady, empty attention queue, the section says so. |
-| `/?state=overflow` | 200+ matters. Proves the lists cap, fold, and stay readable. |
-| `/?state=loading` | Skeleton in the same rhythm as the loaded page. |
-| `/?state=error` | The data source did not respond; nothing stale is shown. |
-
 ## Information architecture
 
 Top to bottom, in the order an admin would ask:
