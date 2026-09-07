@@ -55,6 +55,11 @@
   --terracotta: #b1502f;
   --terracotta-wash: #f3e4dc; /* pale tint — breach surfaces only */
   --sand-wash: #efe3d0; /* faint warm — the middle "straining" step */
+  /* the one cool note: a pale mist blue-grey. The pastel the brand asks
+     for, spent on calm — the steady state and the revenue fill — so the
+     warm ramp above stays the ground and the terracotta stays the alarm.
+     ink-1 on mist 14.5:1 · ink-3 on mist 4.9:1. */
+  --mist: #e8eef1;
 
   /* ---- 2. semantic (shadcn) tokens — reference tier 1 only ---- */
   --background: var(--paper);
@@ -108,17 +113,19 @@
   --destructive-foreground: var(--paper);
 
   /* charts stay on the neutral ramp — no rainbow, no rescue colours.
-     Every step clears 3:1 as a graphical mark on both grounds. */
+     Every step clears 3:1 as a graphical mark on both grounds. The one
+     area fill is the mist tint: soft under an ink line, never a mark. */
   --chart-1: var(--n-900);
   --chart-2: var(--n-700);
   --chart-3: var(--n-600);
   --chart-4: var(--n-500);
   --chart-5: var(--n-400);
+  --chart-fill: var(--mist);
 
   /* status — a three-step escalation that stays quiet until it can't:
-     steady is bare neutral, straining a whisper of warm, and only
+     steady is the cool mist, straining a whisper of warm, and only
      breaking spends the terracotta. */
-  --steady: var(--n-100);
+  --steady: var(--mist);
   --steady-foreground: var(--ink-1);
   --straining: var(--sand-wash);
   --straining-foreground: var(--ink-1);
@@ -180,6 +187,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-fill: var(--chart-fill);
 
   --color-steady: var(--steady);
   --color-steady-foreground: var(--steady-foreground);
@@ -276,23 +284,31 @@
 
   /* .t-body — names and prose. Matter, client and lawyer names wherever
      they appear, including inside menus, so a name is the same size in a
-     table row and in the dropdown that reassigns it. */
+     table row and in the dropdown that reassigns it. A digit inside a
+     sentence here ("6 deadlines", "room for 9 more") is prose, not a
+     quantity to scan — it gets Newsreader's oldstyle figures (onum),
+     which sit on the baseline like lowercase letters, rather than the
+     lining tabular digits `body` sets globally for the mono/sans figure
+     roles. */
   .t-body {
     font-family: var(--font-serif);
     font-size: 15px;
     line-height: 1.25;
+    font-variant-numeric: oldstyle-nums proportional-nums;
   }
 
   /* .t-subhead — the body face at medium weight. ONE job: the label above
      a group or a figure. Stat-tile labels, list group headers, menu
      section labels, chart captions. Distinct from .t-body by weight
      alone, so the editorial voice holds and the page doesn't sprout a
-     second heading family. */
+     second heading family. Same oldstyle figures as .t-body — it's the
+     same serif prose face at a different weight, not a different rule. */
   .t-subhead {
     font-family: var(--font-serif);
     font-size: 15px;
     line-height: 1.3;
     font-weight: 500;
+    font-variant-numeric: oldstyle-nums proportional-nums;
   }
 
   /* .t-section — the only heading. One per top-level block. */
@@ -300,6 +316,7 @@
     font-family: var(--font-serif);
     font-size: 20px;
     line-height: 1.2;
+    font-variant-numeric: oldstyle-nums proportional-nums;
   }
 
   /* .t-figure / .t-figure-sm — the quantity. Full size for the one hero

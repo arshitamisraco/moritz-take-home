@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Newsreader, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+import { MotionProvider } from "@/components/motion/provider";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -33,7 +35,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${newsreader.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        <TooltipProvider>{children}</TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </MotionProvider>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

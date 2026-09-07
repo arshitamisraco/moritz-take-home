@@ -13,7 +13,7 @@ const badgeVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-accent",
         destructive:
-          "bg-breaking-tint text-destructive [a]:hover:bg-breaking-tint",
+          "bg-breaking-tint text-destructive [a]:hover:bg-surface-active",
         outline: "border-border text-foreground [a]:hover:bg-accent",
         ghost: "hover:bg-accent",
         link: "text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground",

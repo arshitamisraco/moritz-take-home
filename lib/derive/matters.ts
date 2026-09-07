@@ -13,29 +13,52 @@ export interface AtRiskRow {
 const NEXT_WINDOW_MS = 6 * HOUR;
 const THIS_WEEK_MS = 7 * DAY;
 
-export function isComplianceBreach(m: EffectiveMatter): boolean {
-  return !m.conflictsCleared && m.workStarted;
+/**
+ * A verb has been spent on this matter, so it is no longer an open
+ * exception: it leaves the attention queue and stops feeding the pillar
+ * rules. Before this existed, every action was cosmetic — `expedite` set
+ * an overlay flag that nothing downstream read, so the alert it cleared
+ * stayed on screen, the health pillar stayed Breaking, and the only
+ * visible result was a button turning into the word "expedited".
+ *
+ * The rule is deliberately blunt: one action per matter is the decision.
+ * Chasing an overdue matter does not make it un-overdue in the world, but
+ * it does move it off the admin's desk, which is what this queue tracks.
+ * Generalizes the `!m.halted` gate the deadline predicates already ran.
+ */
+export function isHandled(m: EffectiveMatter): boolean {
+  return (
+    m.chased ||
+    m.halted ||
+    m.escalated ||
+    m.conflictsExpedited ||
+    m.effectiveLawyerId !== m.lawyerId
+  );
 }
 
-/** A halted matter's deadline pressure is struck through — paused work
- * doesn't accrue as overdue or stalled. */
+export function isComplianceBreach(m: EffectiveMatter): boolean {
+  return !m.conflictsCleared && m.workStarted && !m.conflictsExpedited;
+}
+
+/** A handled matter's deadline pressure is struck through — paused,
+ * chased or reassigned work doesn't accrue as overdue or stalled. */
 export function isOverdue(m: EffectiveMatter): boolean {
   return (
     m.status === "open" &&
-    !m.halted &&
+    !isHandled(m) &&
     m.deadlineOffsetMs !== null &&
     m.deadlineOffsetMs < 0
   );
 }
 
 export function isStalled(m: EffectiveMatter, stallThresholdMs: number): boolean {
-  return m.status === "open" && !m.halted && m.lastActivityOffsetMs < -stallThresholdMs;
+  return m.status === "open" && !isHandled(m) && m.lastActivityOffsetMs < -stallThresholdMs;
 }
 
 export function isInFinalWindow(m: EffectiveMatter): boolean {
   return (
     m.status === "open" &&
-    !m.halted &&
+    !isHandled(m) &&
     m.deadlineOffsetMs !== null &&
     m.deadlineOffsetMs >= 0 &&
     m.deadlineOffsetMs <= NEXT_WINDOW_MS
@@ -43,6 +66,7 @@ export function isInFinalWindow(m: EffectiveMatter): boolean {
 }
 
 export function bucketFor(m: EffectiveMatter): TimeBucket | null {
+  if (isHandled(m)) return null;
   if (isComplianceBreach(m)) return "compliance";
   if (!m.atRisk) return null;
   if (m.status !== "open" || m.deadlineOffsetMs === null) return null;
@@ -77,6 +101,63 @@ export function atRiskRows(fx: EffectiveFixture): AtRiskRow[] {
   });
 }
 
+/**
+ * The threshold that decides what "needs attention" actually means.
+ *
+ * At risk is not the same as act now: on the demo, 11 of 20 matters carry
+ * some risk flag, and a list of 11 reads as a backlog, not an exception
+ * queue. Act-now is the subset that can still become irreversible before
+ * the end of the day — a compliance breach (work running without cleared
+ * conflicts is a live exposure, not a deadline), anything already overdue,
+ * anything inside the final window, and a same-day deadline only when it
+ * is statutory and so cannot be extended. An ordinary same-day promise is
+ * not yet irreversible, so it waits below the line.
+ *
+ * Everything else is the watch tier: real, but nothing breaks today.
+ */
+export function isActNow(row: AtRiskRow): boolean {
+  return (
+    row.bucket === "compliance" ||
+    row.bucket === "overdue" ||
+    row.bucket === "next4h" ||
+    (row.bucket === "today" && row.matter.cannotExtend === true)
+  );
+}
+
+/** The act-now tier, in atRiskRows order. The alert always spotlights the
+ * first row — the single most urgent matter, not a page through the set. */
+export function actNowRows(rows: AtRiskRow[]): AtRiskRow[] {
+  return rows.filter(isActNow);
+}
+
+/** How many rows sit in each bucket — passed to a truncated list so its
+ * group headers state the tier's real totals, not the slice's. */
+export function bucketCounts(rows: AtRiskRow[]): Partial<Record<TimeBucket, number>> {
+  return rows.reduce<Partial<Record<TimeBucket, number>>>((acc, row) => {
+    acc[row.bucket] = (acc[row.bucket] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+const BUCKET_ORDER: TimeBucket[] = ["compliance", "overdue", "next4h", "today", "thisWeek"];
+const BUCKET_SUMMARY_LABEL: Record<TimeBucket, string> = {
+  compliance: "compliance",
+  overdue: "overdue",
+  next4h: "next 4h",
+  today: "today",
+  thisWeek: "this week",
+};
+
+/** The line above the at-risk table — every bucket that's holding
+ * something, in table order, so desktop and mobile print identical
+ * numbers. */
+export function atRiskSummary(rows: AtRiskRow[]): string {
+  const counts = bucketCounts(rows);
+  return BUCKET_ORDER.filter((b) => (counts[b] ?? 0) > 0)
+    .map((b) => `${counts[b]} ${BUCKET_SUMMARY_LABEL[b]}`)
+    .join(" · ");
+}
+
 export function exceptionQueue(fx: EffectiveFixture): EffectiveMatter[] {
   return fx.matters.filter((m) => m.status === "open" && m.effectiveLawyerId === null);
 }
@@ -98,6 +179,21 @@ export function nextDueMatter(fx: EffectiveFixture): EffectiveMatter | null {
     .filter((m) => m.status === "open" && m.deadlineOffsetMs !== null && m.deadlineOffsetMs >= 0)
     .sort((a, b) => (a.deadlineOffsetMs as number) - (b.deadlineOffsetMs as number));
   return upcoming[0] ?? null;
+}
+
+/**
+ * Elapsed against the promised window, as a percentage — 100 means the SLA
+ * is spent, >100 means it's blown. null for non-promise matters or ones
+ * without a recorded promise time. The single source for both the "72h
+ * against 48h promised" copy and any visual severity keyed off it.
+ */
+export function promiseClockPct(m: EffectiveMatter): number | null {
+  if (m.deadlineKind !== "promise" || m.promisedAtOffsetMs === null || m.deadlineOffsetMs === null) {
+    return null;
+  }
+  const elapsed = -m.promisedAtOffsetMs;
+  const total = m.deadlineOffsetMs - m.promisedAtOffsetMs;
+  return Math.round((elapsed / total) * 100);
 }
 
 export function onTimeRatePct(fx: EffectiveFixture): number {

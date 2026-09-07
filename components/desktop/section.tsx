@@ -17,21 +17,30 @@ export function Section({
   meta,
   children,
   className,
+  as = "h2",
+  first = false,
 }: {
   id: string;
   title: string;
   meta?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** Heading level for the title — Needs attention keeps h1 semantics as
+   * the page's first heading; every other section is an h2. */
+  as?: "h1" | "h2";
+  /** Drops the top rule and reduces the top margin for the first section
+   * under the header, where the pillar band already provides the break. */
+  first?: boolean;
 }) {
+  const Heading = as;
   return (
     <section
       id={id}
       aria-label={title}
-      className={cn("mt-16 border-t border-border pt-10", className)}
+      className={cn(first ? "mt-10" : "mt-16 border-t border-border pt-10", className)}
     >
       <div className="flex items-baseline justify-between gap-6">
-        <h2 className="t-section">{title}</h2>
+        <Heading className="t-section">{title}</Heading>
         {meta != null && (
           <div className="t-detail tabular-nums text-muted-foreground">{meta}</div>
         )}

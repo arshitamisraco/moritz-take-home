@@ -15,6 +15,10 @@ const alertVariants = cva(
         // state, so the callout never needs a badge to restate it.
         destructive:
           "border-breaking bg-breaking-tint text-foreground *:[svg]:text-breaking",
+        // The middle step: a whisper of warm sand for a matter that is
+        // urgent but not yet blown, so the terracotta stays reserved for
+        // the ones that actually are.
+        straining: "border-border bg-straining text-foreground *:[svg]:text-ink-1",
       },
     },
     defaultVariants: {

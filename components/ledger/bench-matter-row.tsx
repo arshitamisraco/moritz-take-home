@@ -31,7 +31,7 @@ export function BenchMatterRow({
       : `${dayLabel(matter.deadlineOffsetMs)} ${clockTime(matter.deadlineOffsetMs)}`;
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
+    <li className="group/row flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-sm px-2 py-3 -mx-2 transition-wash hover:bg-accent">
       <div className="min-w-0">
         <p className="t-detail truncate">
           {matter.name} <span className="text-muted-foreground">· {matter.client}</span>

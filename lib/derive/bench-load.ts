@@ -179,8 +179,10 @@ export function benchRows(fx: EffectiveFixture, sticky?: ReadonlySet<string>): B
 }
 
 /** The one derived sentence the card leads with — capacity and deadline
- * stated as a single fact. Carries the whole card on a quiet day. */
-export function workloadVerdict(fx: EffectiveFixture): string {
+ * stated as a single fact. Carries the whole card on a quiet day. Split
+ * into a `lead` clause (the verdict itself) and a `room` clause (spare
+ * capacity elsewhere) so the two can render at different type weights. */
+export function workloadVerdictParts(fx: EffectiveFixture): { lead: string; room: string | null } {
   const over = overCommitted(fx);
   const room = headroom(fx);
   const roomSum = room.reduce((s, r) => s + r.spare, 0);
@@ -196,31 +198,31 @@ export function workloadVerdict(fx: EffectiveFixture): string {
 
   const roomClause =
     room.length > 0
-      ? ` ${room.length}${over.length > 0 ? " others" : ""} ${
+      ? `${room.length}${over.length > 0 ? " others" : ""} ${
           room.length === 1 ? "has" : "have"
         } room for ${roomSum} more.`
-      : "";
+      : null;
 
   if (n === 0) {
-    const head =
+    const lead =
       over.length === 0
         ? "Every lawyer is inside their declared capacity."
         : `No deadlines are due today or overdue. ${over.length} ${
             over.length === 1 ? "lawyer is" : "lawyers are"
           } over declared capacity.`;
-    return head + roomClause;
+    return { lead, room: roomClause };
   }
 
-  let head: string;
+  let lead: string;
   if (m === n) {
-    head =
+    lead =
       n === 1
         ? "The one deadline due today or overdue sits with a lawyer already over capacity."
         : `All ${n} deadlines due today or overdue sit with lawyers already over capacity.`;
   } else if (m > 0) {
-    head = `${m} of ${n} deadlines due today or overdue sit with lawyers already over capacity.`;
+    lead = `${m} of ${n} deadlines due today or overdue sit with lawyers already over capacity.`;
   } else {
-    head = `${n} deadline${n === 1 ? " is" : "s are"} due today or overdue.`;
+    lead = `${n} deadline${n === 1 ? " is" : "s are"} due today or overdue.`;
   }
-  return head + roomClause;
+  return { lead, room: roomClause };
 }

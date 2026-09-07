@@ -72,6 +72,13 @@ export function todayDateLabel(): string {
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
 }
 
+/** "Mon 7 Sep" — the header's date label, off the same fixed clock every
+ * other timestamp on the page reads from. */
+export function todayLongLabel(): string {
+  const d = offsetToDate(0);
+  return `${WEEKDAYS[d.getUTCDay()].slice(0, 3)} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+}
+
 /** "morning" / "afternoon" / "evening", from the demo clock's hour — the
  * header greeting is never hardcoded to match whatever DEMO_NOW says. */
 export function greetingWord(): string {

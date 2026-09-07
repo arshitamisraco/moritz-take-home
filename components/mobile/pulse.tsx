@@ -2,8 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { clockTime, pastDayLabel } from "@/lib/format";
-import { groupByDay, pulseWindow, type PulseKind } from "@/lib/derive/pulse";
+import { groupByDay, pulseWindow, PULSE_KINDS, type PulseKind } from "@/lib/derive/pulse";
 import type { ActivityEvent } from "@/lib/fixture/types";
+
+const PULSE_KIND_LABEL: Record<PulseKind, string> = {
+  filing_sent: "filings sent",
+  meeting: "meetings",
+  opened: "opened",
+  onboarding: "onboardings",
+};
 
 const KIND_LABEL: Record<string, string> = {
   opened: "opened",
@@ -19,13 +26,6 @@ const KIND_LABEL: Record<string, string> = {
   conflicts_expedited: "conflicts expedited",
   availability_requested: "availability requested",
 };
-
-const TILES: { kind: PulseKind; label: string }[] = [
-  { kind: "filing_sent", label: "Filings" },
-  { kind: "meeting", label: "Meetings" },
-  { kind: "opened", label: "New matters" },
-  { kind: "onboarding", label: "Onboardings" },
-];
 
 const INITIAL_ROWS = 5;
 
@@ -66,16 +66,16 @@ export function MobilePulse({ events }: { events: ActivityEvent[] }) {
       <h2 className="t-section">Firm pulse</h2>
       <p className="t-detail mt-1 text-muted-foreground">Last 7 days</p>
 
-      <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
-        {TILES.map((t) => (
-          <div key={t.kind}>
-            <p className="t-figure-sm">{pulse.byKind[t.kind]}</p>
-            <p className="t-detail text-muted-foreground">{t.label}</p>
+      <p className="t-detail mt-4 text-muted-foreground">{comparison}</p>
+
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        {PULSE_KINDS.map((kind) => (
+          <div key={kind} className="flex flex-col gap-1">
+            <p className="t-figure-sm">{pulse.byKind[kind]}</p>
+            <p className="t-eyebrow text-muted-foreground">{PULSE_KIND_LABEL[kind]}</p>
           </div>
         ))}
       </div>
-
-      <p className="t-detail mt-4 text-muted-foreground">{comparison}</p>
 
       {blocks.length === 0 ? (
         <p className="t-detail mt-4 text-muted-foreground">No activity</p>

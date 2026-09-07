@@ -1,17 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
-  CollapsibleTrigger,
   CollapsiblePanel,
 } from "@/components/ui/collapsible";
+import { DisclosureRow } from "@/components/ledger/disclosure-row";
 import { Section } from "@/components/desktop/section";
 import { clockTime, pastDayLabel } from "@/lib/format";
-import { groupByDay, pulseWindow, type PulseKind } from "@/lib/derive/pulse";
+import { groupByDay, pulseWindow, PULSE_KINDS, type PulseKind } from "@/lib/derive/pulse";
 import type { ActivityEvent } from "@/lib/fixture/types";
+
+const PULSE_KIND_LABEL: Record<PulseKind, string> = {
+  filing_sent: "filings sent",
+  meeting: "meetings",
+  opened: "opened",
+  onboarding: "onboardings",
+};
 
 const KIND_LABEL: Record<string, string> = {
   opened: "opened",
@@ -27,13 +33,6 @@ const KIND_LABEL: Record<string, string> = {
   conflicts_expedited: "conflicts expedited",
   availability_requested: "availability requested",
 };
-
-const TILES: { kind: PulseKind; label: string }[] = [
-  { kind: "filing_sent", label: "Filings" },
-  { kind: "meeting", label: "Meetings" },
-  { kind: "opened", label: "New matters" },
-  { kind: "onboarding", label: "Onboardings" },
-];
 
 /** Today plus three days collapsed; "Load older" reveals the rest of the 7. */
 const INITIAL_DAYS = 4;
@@ -59,14 +58,11 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
 }
 
 /**
- * Firm pulse on one rolling 7-day window. The four tiles double as filter
- * toggles; the log is the body of the card, chunked by day — today open,
- * earlier days collapsed to a one-line count. Every number is derived from
- * the one event stream, so the tiles sum to the headline and the log can
- * never disagree with the tally.
+ * Firm pulse on one rolling 7-day window. The log is the body of the
+ * card, chunked by day — today open, earlier days collapsed to a
+ * one-line count.
  */
 export function Pulse({ events }: { events: ActivityEvent[] }) {
-  const [activeKind, setActiveKind] = useState<PulseKind | null>(null);
   const [shownDays, setShownDays] = useState(INITIAL_DAYS);
 
   const pulse = useMemo(() => pulseWindow(events), [events]);
@@ -80,55 +76,36 @@ export function Pulse({ events }: { events: ActivityEvent[] }) {
           {comparisonLine(pulse.total, pulse.changePct)}
         </p>
 
-        <div className="mt-6 grid grid-cols-4 gap-2 border-b border-border pb-8">
-          {TILES.map((t) => {
-            const pressed = activeKind === t.kind;
-            return (
-              <Button
-                key={t.kind}
-                variant="ghost"
-                aria-pressed={pressed}
-                onClick={() => setActiveKind(pressed ? null : t.kind)}
-                className="h-auto flex-col items-start gap-2 rounded-md px-3 py-3 text-left aria-pressed:bg-accent"
-              >
-                <span className="t-figure-sm">{pulse.byKind[t.kind]}</span>
-                <span className="t-detail text-muted-foreground">{t.label}</span>
-              </Button>
-            );
-          })}
+        <div className="mt-4 grid grid-cols-4 gap-4">
+          {PULSE_KINDS.map((kind) => (
+            <div key={kind} className="flex flex-col gap-1">
+              <p className="t-figure-sm">{pulse.byKind[kind]}</p>
+              <p className="t-eyebrow text-muted-foreground">{PULSE_KIND_LABEL[kind]}</p>
+            </div>
+          ))}
         </div>
 
-        <p className="t-subhead mt-8">
-          Latest activity{activeKind ? ` · ${KIND_LABEL[activeKind]}` : ""}
-        </p>
+        <p className="t-subhead mt-8">Latest activity</p>
 
         <div className="mt-3 flex flex-col divide-y divide-border">
-          {visible.map((group, i) => {
-            const dayEvents = activeKind
-              ? group.events.filter((e) => e.kind === activeKind)
-              : group.events;
-            return (
-              <Collapsible key={group.offsetMs} defaultOpen={i === 0} className="py-1">
-                <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-sm py-3 text-left focus-ring">
-                  <ChevronRight className="size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
-                  <span className="t-body">{pastDayLabel(group.offsetMs)}</span>
-                </CollapsibleTrigger>
-                <CollapsiblePanel>
-                  {dayEvents.length > 0 ? (
-                    <ul className="flex flex-col divide-y divide-rule-quiet pb-1 pl-3">
-                      {dayEvents.map((e) => (
-                        <ActivityRow key={e.id} event={e} />
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="t-detail pb-2 pl-3 text-muted-foreground">
-                      {activeKind ? "No matching activity" : "No activity"}
-                    </p>
-                  )}
-                </CollapsiblePanel>
-              </Collapsible>
-            );
-          })}
+          {visible.map((group, i) => (
+            <Collapsible key={group.offsetMs} defaultOpen={i === 0} className="py-1">
+              <DisclosureRow>
+                <span className="t-body">{pastDayLabel(group.offsetMs)}</span>
+              </DisclosureRow>
+              <CollapsiblePanel>
+                {group.events.length > 0 ? (
+                  <ul className="flex flex-col divide-y divide-rule-quiet pb-1 pl-3">
+                    {group.events.map((e) => (
+                      <ActivityRow key={e.id} event={e} />
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="t-detail pb-2 pl-3 text-muted-foreground">No activity</p>
+                )}
+              </CollapsiblePanel>
+            </Collapsible>
+          ))}
         </div>
 
         {shownDays < groups.length && (

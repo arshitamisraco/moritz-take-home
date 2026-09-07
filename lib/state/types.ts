@@ -15,6 +15,9 @@ export interface LedgerState {
   availabilityRequested: Set<string>;
   /** Events appended by actions, newest first. */
   appendedEvents: ActivityEvent[];
+  /** Prior states, most recent last — capped, for `undo`. Never read by
+   * anything outside the reducer. */
+  history: LedgerState[];
 }
 
 export type LedgerAction =
@@ -23,10 +26,13 @@ export type LedgerAction =
   | { type: "expedite"; matterId: string; matterLabel: string }
   | { type: "escalate"; matterId: string; matterLabel: string }
   | { type: "reassign"; matterId: string; matterLabel: string; toLawyerId: string; toLawyerName: string }
-  | { type: "requestAvailability"; lawyerId: string; lawyerName: string };
+  | { type: "requestAvailability"; lawyerId: string; lawyerName: string }
+  | { type: "requestAvailabilityMany"; lawyers: { lawyerId: string; lawyerName: string }[] }
+  | { type: "undo" };
 
 export const EMPTY_LEDGER_STATE: LedgerState = {
   matterOverlays: {},
   availabilityRequested: new Set(),
   appendedEvents: [],
+  history: [],
 };

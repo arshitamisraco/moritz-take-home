@@ -1,38 +1,45 @@
 "use client";
 
 import { MobileHeader } from "@/components/mobile/header";
+import { MobilePillarStrip } from "@/components/mobile/pillar-strip";
 import { MobileNeedsAttention } from "@/components/mobile/needs-attention";
 import { MobileWorkload } from "@/components/mobile/workload";
 import { MobilePulse } from "@/components/mobile/pulse";
 import { MobileFinancial } from "@/components/mobile/financial";
+import { Reveal } from "@/components/motion/reveal";
 import type { EffectiveFixture } from "@/lib/derive/apply-overlay";
-import type { AtRiskRow } from "@/lib/derive/matters";
-import type { AttentionSummary } from "@/lib/derive/attention-summary";
 import type { LedgerAction } from "@/lib/state/types";
 import type { ActivityEvent } from "@/lib/fixture/types";
 
 export function MobileShell({
   fx,
-  rows,
-  summary,
   activity,
   dispatch,
   onOpenPalette,
 }: {
   fx: EffectiveFixture;
-  rows: AtRiskRow[];
-  summary: AttentionSummary;
   activity: ActivityEvent[];
   dispatch: (action: LedgerAction) => void;
   onOpenPalette: () => void;
 }) {
   return (
-    <div id="m-top" className="pb-24">
-      <MobileHeader onOpenPalette={onOpenPalette} onNewMatter={onOpenPalette} />
-      <MobileNeedsAttention rows={rows} summary={summary} dispatch={dispatch} />
-      <MobileWorkload fx={fx} rows={rows} dispatch={dispatch} />
-      <MobilePulse events={activity} />
-      <MobileFinancial fx={fx} />
-    </div>
+    <main id="m-top" className="pb-24">
+      <MobileHeader onOpenPalette={onOpenPalette} />
+      <Reveal order={0}>
+        <MobilePillarStrip fx={fx} />
+      </Reveal>
+      <Reveal order={1}>
+        <MobileNeedsAttention fx={fx} dispatch={dispatch} />
+      </Reveal>
+      <Reveal order={2}>
+        <MobileWorkload fx={fx} dispatch={dispatch} />
+      </Reveal>
+      <Reveal order={3}>
+        <MobilePulse events={activity} />
+      </Reveal>
+      <Reveal order={4}>
+        <MobileFinancial fx={fx} />
+      </Reveal>
+    </main>
   );
 }

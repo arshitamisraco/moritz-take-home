@@ -172,7 +172,7 @@ export function matterAction(row: AtRiskRow, candidates: LawyerLoad[]): MatterAc
       primary.kind !== "reassign" && primary.kind !== "assign" && candidates.length > 0,
     assign: false,
     chase: m.effectiveLawyerId !== null && !m.chased,
-    expedite: isComplianceBreach(m) && !m.conflictsExpedited,
+    expedite: isComplianceBreach(m),
     halt: !m.halted,
     escalate: !m.escalated,
   };

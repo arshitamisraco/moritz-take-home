@@ -26,6 +26,35 @@ const SEGMENT_TOKEN: Record<DeadlinePressure, string> = {
   none: "bg-chart-5",
 };
 
+const LEGEND: { key: DeadlinePressure; label: string }[] = [
+  { key: "overdue", label: "overdue" },
+  { key: "today", label: "due today" },
+  { key: "later", label: "later" },
+  { key: "none", label: "no deadline" },
+];
+
+/**
+ * The meter's key, rendered once per surface above the bench — the visible
+ * text that decodes the colour channel and the hairline for a first-time
+ * reader, since the meter itself is aria-hidden.
+ */
+export function CapacityLegend({ className }: { className?: string }) {
+  return (
+    <p className={cn("t-detail flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground", className)}>
+      {LEGEND.map(({ key, label }) => (
+        <span key={key} className="inline-flex items-center gap-1.5">
+          <span aria-hidden="true" className={cn("inline-block h-1.5 w-3", SEGMENT_TOKEN[key])} />
+          {label}
+        </span>
+      ))}
+      <span className="inline-flex items-center gap-1.5">
+        <span aria-hidden="true" className="inline-block h-3 w-px bg-ink-3" />
+        declared capacity
+      </span>
+    </p>
+  );
+}
+
 export function CapacityMeter({
   segments,
   declared,

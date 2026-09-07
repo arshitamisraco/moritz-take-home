@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Five visual tiers over one shared geometry. Every tier is the same box —
+ * Four visual tiers over one shared geometry. Every tier is the same box —
  * height and padding come from `size` alone (h-8 at default), never from the
  * variant. Rest state carries no fill for the quiet tiers; hover warms them
  * by a single flat step of neutral wash (--accent), at a 2px radius, over a
@@ -17,6 +17,11 @@ import { cn } from "@/lib/utils"
  *   ghost                 text only at rest, neutral wash on hover
  *   link                  Ink 2, 1px underline at 0.15em offset — reveals/navigates
  *   destructive           Terracotta text, NO fill, neutral wash on hover
+ *
+ * Second step: when a button sits inside a `group/row` (a hovered table or
+ * list row already washed with --accent), its own hover/expanded state steps
+ * one shade further to --surface-active — pressed, not a new hue — so a
+ * button inside an already-hovered row still reads as interactive.
  */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-md text-sm font-medium whitespace-nowrap outline-none select-none transition-wash focus-ring disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -26,11 +31,9 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary-hover",
         outline:
-          "border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
-        secondary:
-          "border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent",
+          "border border-border bg-transparent text-foreground hover:bg-accent aria-expanded:bg-accent group-hover/row:hover:bg-surface-active group-hover/row:aria-expanded:bg-surface-active",
         ghost:
-          "bg-transparent hover:bg-accent aria-expanded:bg-accent",
+          "bg-transparent hover:bg-accent aria-expanded:bg-accent group-hover/row:hover:bg-surface-active group-hover/row:aria-expanded:bg-surface-active",
         destructive:
           "bg-transparent text-destructive hover:bg-surface-active",
         link: "text-ink-2 underline decoration-1 underline-offset-[0.15em] hover:text-foreground",

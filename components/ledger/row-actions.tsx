@@ -24,7 +24,7 @@ import type { LedgerAction } from "@/lib/state/types";
 import { cn } from "@/lib/utils";
 
 export function DoneMarker({ children }: { children: React.ReactNode }) {
-  return <span className="t-subhead text-muted-foreground">{children}</span>;
+  return <span className="t-detail text-muted-foreground">{children}</span>;
 }
 
 /**
@@ -102,7 +102,7 @@ export function RowActions({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button variant="ghost" size="sm" data-icon="inline-end">
+              <Button variant="ghost" data-icon="inline-end">
                 More
                 <ChevronDown className="size-3" aria-hidden="true" />
               </Button>

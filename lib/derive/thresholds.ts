@@ -14,18 +14,21 @@ export const STALL_HOURS = 96;
 export const PILLAR_RULES = {
   health: {
     label: "Firm health",
+    unit: "matters",
     steady: "No breaches, nothing overdue",
     straining: "Matters in final window, or matters stalled",
     breaking: "Anything overdue, or work started before conflicts cleared",
   },
   workload: {
     label: "Workload",
+    unit: "lawyers",
     steady: `≤${WORKLOAD_STEADY_MAX_OVER_COMMITTED} lawyers over committed`,
     straining: `${WORKLOAD_STEADY_MAX_OVER_COMMITTED + 1}–${WORKLOAD_STRAINING_MAX_OVER_COMMITTED} over committed, or undeclared availability`,
     breaking: `>${WORKLOAD_STRAINING_MAX_OVER_COMMITTED} over committed, or an unplaceable matter past its deadline`,
   },
   financial: {
-    label: "Financial",
+    label: "Financial health",
+    unit: "matters",
     steady: "All open matters above margin floor",
     straining: "Any open matter below floor or negative",
     breaking: "A delivered matter closed negative",

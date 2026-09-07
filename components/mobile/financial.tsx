@@ -9,8 +9,10 @@ import {
   latestRevenueMonth,
   leakConcentrationPct,
   leakRankedBelowFloor,
+  lowestMarginType,
   marginByType,
   marginLeakUsd,
+  revenueChangePct,
   targetAttainmentPct,
   totalMarginLeakUsd,
 } from "@/lib/derive/financial";
@@ -22,8 +24,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Mobile gets the conclusion, desktop gets the analysis — no charts
- * squeezed into 320px. The state, the leak headline, the revenue read,
- * and the ranked matters behind one disclosure.
+ * squeezed into 320px. Revenue leads (hero figure + the three facts
+ * desktop's band 1 shows), then margin-by-type, then the leak behind one
+ * disclosure.
  */
 const BELOW_FLOOR_PREVIEW = 5;
 
@@ -32,6 +35,8 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
   const ranked = leakRankedBelowFloor(fx);
   const totalLeak = totalMarginLeakUsd(fx);
   const byType = marginByType(fx);
+  const lowest = lowestMarginType(fx);
+  const changePct = revenueChangePct(fx);
   const attainment = targetAttainmentPct(fx);
   const latest = latestRevenueMonth(fx);
 
@@ -42,32 +47,27 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
 
   return (
     <section id="m-financial" className="border-b border-border px-4 py-7">
-      <h2 className="t-section">Financial health</h2>
-
-      <div className="mt-3 flex items-baseline gap-2">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="t-section">Financial health</h2>
+          <p className="t-figure mt-2 tabular-nums">
+            {latest ? formatUsdCompact(latest.amountUsd) : "—"}
+          </p>
+        </div>
         <StatusBadge variant={pillar.state} />
-        {ranked.length === 0 ? (
-          <p className="t-detail text-pretty text-muted-foreground">
-            All open matters above the {MARGIN_FLOOR_PCT}% floor
-          </p>
-        ) : (
-          <p className="t-detail text-pretty tabular-nums text-muted-foreground">
-            {formatUsdCompact(totalLeak)} margin shortfall · {ranked.length} below the{" "}
-            {MARGIN_FLOOR_PCT}% floor
-          </p>
-        )}
       </div>
 
-      {worst && (
-        <p className="t-detail mt-1 tabular-nums text-muted-foreground">
-          {worst.client} · {formatPct(worst.marginPct)} · {concentration}% of the shortfall
-        </p>
-      )}
-
       <p className="t-detail mt-1 tabular-nums text-muted-foreground">
-        {latest ? formatUsdCompact(latest.amountUsd) : "—"} {latest?.label} · {attainment}% of{" "}
-        {formatUsdCompact(fx.revenueTargetUsd)} target · margin {fx.realizedMarginPct}% vs{" "}
-        {fx.marginTargetPct}% target
+        {changePct !== null && (
+          <>
+            <span className={changePct < 0 ? "text-breaking" : undefined}>
+              {changePct >= 0 ? "↑" : "↓"} {Math.abs(changePct)}%
+            </span>{" "}
+            vs last month ·{" "}
+          </>
+        )}
+        {attainment}% of {formatUsdCompact(fx.revenueTargetUsd)} target · margin{" "}
+        {formatPct(fx.realizedMarginPct)} vs {formatPct(fx.marginTargetPct)} target
       </p>
 
       <Collapsible className="mt-4">
@@ -86,17 +86,38 @@ export function MobileFinancial({ fx }: { fx: EffectiveFixture }) {
                   )}
                 >
                   {formatPct(t.marginPct)}
+                  {t.marginPct < MARGIN_FLOOR_PCT && (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      · {MARGIN_FLOOR_PCT - t.marginPct}pt below floor
+                    </span>
+                  )}
                 </span>
               </li>
             ))}
           </ul>
+          {lowest && (
+            <p className="t-detail mt-2 text-muted-foreground">
+              {lowest.label} run {lowest.belowFloorPts > 0 ? `${lowest.belowFloorPts}pt below` : `${Math.abs(lowest.belowFloorPts)}pt above`} the {MARGIN_FLOOR_PCT}% floor, the thinnest of any type.
+            </p>
+          )}
 
           {ranked.length === 0 ? (
-            <p className="t-detail mt-3 text-muted-foreground">
+            <p className="t-detail mt-4 text-muted-foreground">
               All open matters above the {MARGIN_FLOOR_PCT}% floor
             </p>
           ) : (
             <>
+              <p className="t-detail mt-4 tabular-nums text-muted-foreground">
+                {formatUsdCompact(totalLeak)} margin shortfall · {ranked.length} below the{" "}
+                {MARGIN_FLOOR_PCT}% floor
+                {worst && (
+                  <>
+                    {" "}
+                    · {worst.client} is {concentration}% of it
+                  </>
+                )}
+              </p>
               <ul className="mt-4 flex flex-col divide-y divide-border">
                 {preview.map((m) => (
                   <MatterRow

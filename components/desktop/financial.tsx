@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, Bar, BarChart, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 import { Section } from "@/components/desktop/section";
 import {
   Collapsible,
@@ -19,6 +19,7 @@ import {
   latestRevenueMonth,
   leakConcentrationPct,
   leakRankedBelowFloor,
+  lowestMarginType,
   marginByType,
   marginLeakUsd,
   revenueChangePct,
@@ -42,9 +43,11 @@ const marginByTypeConfig: ChartConfig = {
   marginPct: { label: "Margin", color: "var(--chart-2)" },
 };
 
-const revenueMarginConfig: ChartConfig = {
-  amountUsd: { label: "Revenue", color: "var(--chart-2)" },
-  marginPct: { label: "Margin", color: "var(--chart-1)" },
+/** One series, one question: is revenue on target. Margin's story is told
+ * in words on the band above and by type in the chart alongside — a second
+ * axis and a second line here only garbled both. */
+const revenueConfig: ChartConfig = {
+  amountUsd: { label: "Revenue", color: "var(--chart-1)" },
 };
 
 /** How many below-floor matters the section lists before the rest folds
@@ -74,20 +77,6 @@ function LeakRow({ m }: { m: EffectiveMatter }) {
   );
 }
 
-function leadSentence(fx: EffectiveFixture, ranked: EffectiveMatter[], totalLeak: number): string {
-  if (ranked.length === 0) {
-    return `Steady — all open matters are above the ${MARGIN_FLOOR_PCT}% margin floor.`;
-  }
-  const pillar = financialPillar(fx);
-  const stateLabel = pillar.state === "breaking" ? "Breaking" : pillar.state === "straining" ? "Straining" : "Steady";
-  const concentration = leakConcentrationPct(fx);
-  return `${stateLabel} — ${ranked.length} open matter${ranked.length === 1 ? "" : "s"} ${
-    ranked.length === 1 ? "is" : "are"
-  } running below the ${MARGIN_FLOOR_PCT}% margin floor, costing ${formatUsdCompact(totalLeak)}. ${
-    ranked[0].client
-  } alone is ${concentration}% of it.`;
-}
-
 /**
  * Financial health is a state section, not a work queue — bucketFor()
  * deliberately keeps margin out of at-risk triage, so money is a standing
@@ -99,6 +88,7 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
   const ranked = leakRankedBelowFloor(fx);
   const totalLeak = totalMarginLeakUsd(fx);
   const byType = marginByType(fx);
+  const lowest = lowestMarginType(fx);
   const changePct = revenueChangePct(fx);
   const attainment = targetAttainmentPct(fx);
   const latest = latestRevenueMonth(fx);
@@ -112,32 +102,141 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
       title="Financial health"
       meta={latest ? `Revenue through ${latest.label}` : undefined}
     >
-      <p className="t-body max-w-[70ch] text-pretty">{leadSentence(fx, ranked, totalLeak)}</p>
+      {/* Band 1 — revenue vs target */}
+      <div className="mt-8 flex items-start justify-between gap-4">
+        <div>
+          <p className="t-eyebrow text-muted-foreground">Revenue</p>
+          <p className="t-figure mt-1 tabular-nums">
+            {latest ? formatUsdCompact(latest.amountUsd) : "—"}
+          </p>
+          <p className="t-detail mt-1 tabular-nums text-muted-foreground">
+            {changePct !== null && (
+              <>
+                <span className={changePct < 0 ? "text-breaking" : undefined}>
+                  {changePct >= 0 ? "↑" : "↓"} {Math.abs(changePct)}%
+                </span>{" "}
+                vs last month ·{" "}
+              </>
+            )}
+            {attainment}% of {formatUsdCompact(fx.revenueTargetUsd)} target · margin{" "}
+            {formatPct(fx.realizedMarginPct)} vs {formatPct(fx.marginTargetPct)} target
+          </p>
+        </div>
+        <StatusBadge variant={pillar.state} />
+      </div>
 
-      {/* Band 1 — the leak */}
-      <div className="mt-8">
+      {/* Band 2 — the two "why" reads */}
+      <div className="mt-8 grid grid-cols-2 gap-12 border-t border-border pt-8">
+        <div>
+          <p className="t-subhead">Revenue vs target</p>
+          <ChartContainer config={revenueConfig} className="mt-4 h-52 w-full">
+            <AreaChart data={fx.revenueByMonth} margin={{ left: 4, right: 96, top: 12, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke="var(--border)" />
+              <XAxis
+                dataKey="label"
+                tick={TICK_MONO}
+                axisLine={{ stroke: "var(--border)" }}
+                tickLine={false}
+              />
+              <YAxis
+                width={52}
+                tick={TICK_MONO}
+                tickFormatter={(v) => formatUsdCompact(Number(v))}
+                axisLine={false}
+                tickLine={false}
+                tickCount={4}
+                domain={([dataMin, dataMax]: readonly [number, number]) => [
+                  Math.min(dataMin, fx.revenueTargetUsd) - 20_000,
+                  Math.max(dataMax, fx.revenueTargetUsd) + 20_000,
+                ]}
+              />
+              <ReferenceLine
+                y={fx.revenueTargetUsd}
+                stroke="var(--ink-1)"
+                strokeDasharray="3 3"
+                strokeWidth={1}
+                label={{
+                  value: `${formatUsdCompact(fx.revenueTargetUsd)} target`,
+                  position: "right",
+                  offset: 8,
+                  fill: "var(--ink-2)",
+                  fontSize: 12,
+                  fontFamily: "var(--font-mono)",
+                }}
+              />
+              <ChartTooltip
+                content={<ChartTooltipContent formatter={(v) => formatUsdCompact(Number(v))} />}
+              />
+              <Area
+                dataKey="amountUsd"
+                type="monotone"
+                fill="var(--chart-fill)"
+                fillOpacity={1}
+                stroke="var(--chart-1)"
+                strokeWidth={1.5}
+                dot={false}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+
+        <div>
+          <p className="t-subhead">Where delivery costs most</p>
+          <ChartContainer config={marginByTypeConfig} className="mt-4 h-52 w-full">
+            <BarChart data={byType} layout="vertical" margin={{ left: 0, right: 12 }}>
+              <CartesianGrid horizontal={false} stroke="var(--border)" />
+              <XAxis
+                type="number"
+                domain={[0, 100]}
+                tick={TICK_MONO}
+                tickFormatter={(v) => `${v}%`}
+                axisLine={{ stroke: "var(--border)" }}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="label"
+                width={120}
+                tick={TICK_SANS}
+                axisLine={false}
+                tickLine={false}
+              />
+              <ReferenceLine
+                x={MARGIN_FLOOR_PCT}
+                stroke="var(--ink-1)"
+                strokeDasharray="3 3"
+                strokeWidth={1}
+              />
+              <ChartTooltip content={<ChartTooltipContent formatter={(v) => `${v}%`} />} />
+              <Bar dataKey="marginPct" fill="var(--chart-2)" radius={0} barSize={10} />
+            </BarChart>
+          </ChartContainer>
+          {lowest && (
+            <p className="t-detail mt-3 text-muted-foreground">
+              {lowest.label} run {lowest.belowFloorPts > 0 ? `${lowest.belowFloorPts}pt below` : `${Math.abs(lowest.belowFloorPts)}pt above`} the {MARGIN_FLOOR_PCT}% floor, the thinnest of any type.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Band 3 — the leak, demoted */}
+      <div className="mt-12 border-t border-border pt-8">
         {ranked.length === 0 ? (
           <div className="flex items-center gap-3">
-            <StatusBadge variant={pillar.state} />
             <p className="t-detail text-muted-foreground">
               All open matters above the {MARGIN_FLOOR_PCT}% floor
             </p>
           </div>
         ) : (
           <>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="t-eyebrow text-muted-foreground">Margin shortfall</p>
-                <p className="t-figure mt-1">{formatUsdCompact(totalLeak)}</p>
-                <p className="t-detail mt-1 text-muted-foreground">
-                  across {ranked.length} open matter{ranked.length === 1 ? "" : "s"}, against the{" "}
-                  {MARGIN_FLOOR_PCT}% floor
-                </p>
-              </div>
-              <StatusBadge variant={pillar.state} />
-            </div>
+            <p className="t-subhead">Margin shortfall</p>
+            <p className="t-detail mt-1 tabular-nums text-muted-foreground">
+              {formatUsdCompact(totalLeak)} across {ranked.length} open matter
+              {ranked.length === 1 ? "" : "s"}, against the {MARGIN_FLOOR_PCT}% floor ·{" "}
+              {ranked[0].client} is {leakConcentrationPct(fx)}% of it
+            </p>
 
-            <ul className="mt-6 flex flex-col divide-y divide-border">
+            <ul className="mt-4 flex flex-col divide-y divide-border">
               {preview.map((m) => (
                 <LeakRow key={m.id} m={m} />
               ))}
@@ -158,105 +257,6 @@ export function Financial({ fx }: { fx: EffectiveFixture }) {
             )}
           </>
         )}
-      </div>
-
-      {/* Band 2 — the two "why" reads */}
-      <div className="mt-12 grid grid-cols-2 gap-12 border-t border-border pt-8">
-        <div>
-          <p className="t-subhead">Where delivery costs most</p>
-          <ChartContainer config={marginByTypeConfig} className="mt-4 h-44 w-full">
-            <BarChart data={byType} layout="vertical" margin={{ left: 8, right: 12 }}>
-              <CartesianGrid horizontal={false} stroke="var(--border)" />
-              <XAxis
-                type="number"
-                domain={[0, 100]}
-                tick={TICK_MONO}
-                tickFormatter={(v) => `${v}%`}
-                axisLine={{ stroke: "var(--border)" }}
-                tickLine={false}
-              />
-              <YAxis
-                type="category"
-                dataKey="label"
-                width={88}
-                tick={TICK_SANS}
-                axisLine={false}
-                tickLine={false}
-              />
-              <ReferenceLine
-                x={MARGIN_FLOOR_PCT}
-                stroke="var(--ink-1)"
-                strokeDasharray="3 3"
-                strokeWidth={1}
-              />
-              <ChartTooltip content={<ChartTooltipContent formatter={(v) => `${v}%`} />} />
-              <Bar dataKey="marginPct" fill="var(--chart-2)" radius={0} barSize={10} />
-            </BarChart>
-          </ChartContainer>
-          <p className="t-detail mt-3 text-muted-foreground">
-            Financings take the most lawyer time per dollar billed.
-          </p>
-        </div>
-
-        <div>
-          <p className="t-subhead">Revenue vs margin</p>
-          <ChartContainer config={revenueMarginConfig} className="mt-4 h-44 w-full">
-            <ComposedChart data={fx.revenueByMonth} margin={{ left: 4, right: 4, top: 4, bottom: 4 }}>
-              <XAxis dataKey="label" hide />
-              <YAxis
-                yAxisId="revenue"
-                hide
-                domain={["dataMin - 30000", "dataMax + 30000"]}
-              />
-              <YAxis yAxisId="margin" hide domain={[0, 100]} />
-              <ReferenceLine
-                yAxisId="margin"
-                y={fx.marginTargetPct}
-                stroke="var(--ink-1)"
-                strokeDasharray="3 3"
-                strokeWidth={1}
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(v, name) =>
-                      name === "amountUsd" ? formatUsdCompact(Number(v)) : `${v}%`
-                    }
-                  />
-                }
-              />
-              <Area
-                yAxisId="revenue"
-                dataKey="amountUsd"
-                type="monotone"
-                fill="var(--chart-3)"
-                fillOpacity={0.25}
-                stroke="var(--chart-2)"
-                strokeWidth={1.5}
-              />
-              <Line
-                yAxisId="margin"
-                dataKey="marginPct"
-                type="monotone"
-                stroke="var(--chart-1)"
-                strokeWidth={1.5}
-                dot={false}
-              />
-            </ComposedChart>
-          </ChartContainer>
-          <p className="t-detail mt-3 tabular-nums text-muted-foreground">
-            {latest ? formatUsdCompact(latest.amountUsd) : "—"} {latest?.label}
-            {changePct !== null && (
-              <>
-                {" "}
-                · <span className={changePct < 0 ? "text-breaking" : undefined}>
-                  {changePct >= 0 ? "↑" : "↓"} {Math.abs(changePct)}%
-                </span>
-              </>
-            )}{" "}
-            · {attainment}% of {formatUsdCompact(fx.revenueTargetUsd)} target
-          </p>
-        </div>
       </div>
     </Section>
   );

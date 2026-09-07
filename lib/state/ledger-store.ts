@@ -14,8 +14,27 @@ function nextEventId() {
   return `overlay-event-${eventSeq}`;
 }
 
+const HISTORY_CAP = 20;
+
+/** Prior-state snapshot pushed before every mutating action, so `undo` can
+ * pop back to it. Excludes `history` itself — snapshots don't nest. */
+function pushHistory(state: LedgerState): LedgerState[] {
+  const snapshot: LedgerState = {
+    matterOverlays: state.matterOverlays,
+    availabilityRequested: state.availabilityRequested,
+    appendedEvents: state.appendedEvents,
+    history: [],
+  };
+  return [...state.history, snapshot].slice(-HISTORY_CAP);
+}
+
 function reducer(state: LedgerState, action: LedgerAction): LedgerState {
   switch (action.type) {
+    case "undo": {
+      if (state.history.length === 0) return state;
+      const prior = state.history[state.history.length - 1];
+      return { ...prior, history: state.history.slice(0, -1) };
+    }
     case "chase": {
       const event: ActivityEvent = {
         id: nextEventId(),
@@ -27,6 +46,7 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       };
       return {
         ...state,
+        history: pushHistory(state),
         matterOverlays: {
           ...state.matterOverlays,
           [action.matterId]: { ...state.matterOverlays[action.matterId], chased: true },
@@ -45,6 +65,7 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       };
       return {
         ...state,
+        history: pushHistory(state),
         matterOverlays: {
           ...state.matterOverlays,
           [action.matterId]: { ...state.matterOverlays[action.matterId], halted: true },
@@ -63,6 +84,7 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       };
       return {
         ...state,
+        history: pushHistory(state),
         matterOverlays: {
           ...state.matterOverlays,
           [action.matterId]: { ...state.matterOverlays[action.matterId], conflictsExpedited: true },
@@ -81,6 +103,7 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       };
       return {
         ...state,
+        history: pushHistory(state),
         matterOverlays: {
           ...state.matterOverlays,
           [action.matterId]: { ...state.matterOverlays[action.matterId], escalated: true },
@@ -99,6 +122,7 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       };
       return {
         ...state,
+        history: pushHistory(state),
         matterOverlays: {
           ...state.matterOverlays,
           [action.matterId]: {
@@ -122,8 +146,27 @@ function reducer(state: LedgerState, action: LedgerAction): LedgerState {
       next.add(action.lawyerId);
       return {
         ...state,
+        history: pushHistory(state),
         availabilityRequested: next,
         appendedEvents: [event, ...state.appendedEvents],
+      };
+    }
+    case "requestAvailabilityMany": {
+      const events: ActivityEvent[] = action.lawyers.map(({ lawyerId, lawyerName }) => ({
+        id: nextEventId(),
+        offsetMs: 0,
+        kind: "availability_requested",
+        detail: lawyerName,
+        matterId: null,
+        lawyerId,
+      }));
+      const next = new Set(state.availabilityRequested);
+      for (const { lawyerId } of action.lawyers) next.add(lawyerId);
+      return {
+        ...state,
+        history: pushHistory(state),
+        availabilityRequested: next,
+        appendedEvents: [...events, ...state.appendedEvents],
       };
     }
     default:

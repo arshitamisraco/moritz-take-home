@@ -11,7 +11,6 @@ import {
 import { overCommitted, undeclared } from "./bench";
 import {
   MARGIN_FLOOR_PCT,
-  PILLAR_RULES,
   STALL_HOURS,
   WORKLOAD_STEADY_MAX_OVER_COMMITTED,
   WORKLOAD_STRAINING_MAX_OVER_COMMITTED,
@@ -122,5 +121,3 @@ export function financialPillar(fx: EffectiveFixture): PillarResult {
           : `${belowFloor.length} below ${MARGIN_FLOOR_PCT}% floor`,
   };
 }
-
-export const PILLAR_TOOLTIP = PILLAR_RULES;

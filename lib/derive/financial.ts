@@ -41,6 +41,16 @@ export function marginByType(fx: EffectiveFixture): TypeMargin[] {
     .sort((a, b) => b.marginPct - a.marginPct);
 }
 
+/** The matter type with the thinnest margin and how far below the floor it
+ * sits — the chart's caption sentence, derived rather than hand-written so
+ * it tracks whichever type is actually worst. */
+export function lowestMarginType(fx: EffectiveFixture): (TypeMargin & { belowFloorPts: number }) | undefined {
+  const byType = marginByType(fx);
+  if (byType.length === 0) return undefined;
+  const lowest = byType[byType.length - 1];
+  return { ...lowest, belowFloorPts: MARGIN_FLOOR_PCT - lowest.marginPct };
+}
+
 /** Percent change of the latest month over the one before it — the
  * headline's up/down arrow, never typed in. */
 export function revenueChangePct(fx: EffectiveFixture): number | null {
@@ -61,29 +71,10 @@ export function targetAttainmentPct(fx: EffectiveFixture): number {
   return Math.round((last / fx.revenueTargetUsd) * 100);
 }
 
-/** Total value of open matters priced below the margin floor — the
- * section's "exposure" figure. Demo → $17.6k. */
-export function belowFloorExposureUsd(fx: EffectiveFixture): number {
-  return belowFloorOpenMatters(fx).reduce((sum, m) => sum + m.price, 0);
-}
-
-/** Realized minus quoted margin, in points. Negative means the firm is
- * collecting less than it priced. Demo −2, good-day +1 — the one headline
- * figure that separates Steady from Straining. */
-export function realizationGapPts(fx: EffectiveFixture): number {
-  return fx.realizedMarginPct - fx.quotedMarginPct;
-}
-
 /** The most recent revenue month itself, so labels read the real month
  * ("Aug") rather than a generic "this month". */
 export function latestRevenueMonth(fx: EffectiveFixture): RevenueMonth | undefined {
   return fx.revenueByMonth[fx.revenueByMonth.length - 1];
-}
-
-/** The open matter furthest below the floor — belowFloorOpenMatters is
- * already sorted ascending by margin, so this is its first element. */
-export function worstBelowFloor(fx: EffectiveFixture): EffectiveMatter | undefined {
-  return belowFloorOpenMatters(fx)[0];
 }
 
 /** Dollar shortfall a single below-floor matter costs against the margin

@@ -43,7 +43,7 @@ export function ReassignMenu({
       <DropdownMenuTrigger
         disabled={disabled}
         render={
-          <Button variant="outline" size="sm" data-icon="inline-end">
+          <Button variant="outline" data-icon="inline-end">
             {label}
             <ChevronDown className="size-3" aria-hidden="true" />
           </Button>
